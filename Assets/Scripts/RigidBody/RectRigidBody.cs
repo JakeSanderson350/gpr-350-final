@@ -14,6 +14,14 @@ public class RectRigidBody : MonoBehaviour
 
     private Vector3 accForces;
     private Vector3 torque;
+    private Matrix3x3 inertiaTensor;
+
+    private Matrix3x3 rotation;
+
+    private void Start()
+    {
+        
+    }
 }
 
 //// Public properties
