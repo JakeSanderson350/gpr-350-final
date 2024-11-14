@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Matrix3x3 : MonoBehaviour
 {
-    public float[,] values = new float[3,3];
+    public float[,] values = new float[3, 3];
 
     //Constructors
     public Matrix3x3()
@@ -20,6 +20,28 @@ public class Matrix3x3 : MonoBehaviour
         }
 
         this.values = _values;
+    }
+
+    public static Matrix3x3 Identity()
+    {
+        Matrix3x3 idm = new Matrix3x3();
+
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (i == j)
+                {
+                    idm.values[i, j] = 1;
+                }
+                else
+                {
+                    idm.values[i, j] = 0;
+                }
+            }
+        }
+
+        return idm;
     }
 
     //Setter/Getter
