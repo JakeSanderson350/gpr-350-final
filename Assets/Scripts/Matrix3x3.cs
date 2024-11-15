@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Matrix3x3 : MonoBehaviour
+public class Matrix3x3
 {
     public float[,] values = new float[3, 3];
 
@@ -10,6 +10,14 @@ public class Matrix3x3 : MonoBehaviour
     public Matrix3x3()
     {
         values = new float[3,3];
+
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                values[i,j] = 0.0f;
+            }
+        }
     }
 
     public Matrix3x3(float[,] _values)
@@ -22,6 +30,7 @@ public class Matrix3x3 : MonoBehaviour
         this.values = _values;
     }
 
+    //Static methods
     public static Matrix3x3 Identity()
     {
         Matrix3x3 idm = new Matrix3x3();
@@ -42,6 +51,43 @@ public class Matrix3x3 : MonoBehaviour
         }
 
         return idm;
+    }
+
+    public static Matrix3x3 CrossMatrix(Vector3 _cross)
+    {
+        Matrix3x3 crossM = new Matrix3x3();
+
+        //Returns cross matrix: [0 -z  y]
+        //                      [z  0 -x] 
+        //                      [-y x  0]
+
+        crossM.values[1, 0] = -_cross.z;
+        crossM.values[2, 0] = _cross.y;
+        crossM.values[0, 1] = _cross.z;
+        crossM.values[2, 1] = -_cross.x;
+        crossM.values[0, 2] = -_cross.y;
+        crossM.values[1, 2] = _cross.x;
+
+        return crossM;
+    }
+
+    public static Matrix3x3 QuaternionToMatrix(Quaternion q)
+    {
+        Matrix3x3 result = new Matrix3x3();
+
+        result[0, 0] = 1 - 2 * (q.y * q.y + q.z * q.z);
+        result[0, 1] = 2 * (q.x * q.y - q.z * q.w);
+        result[0, 2] = 2 * (q.x * q.z + q.y * q.w);
+
+        result[1, 0] = 2 * (q.x * q.y + q.z * q.w);
+        result[1, 1] = 1 - 2 * (q.x * q.x + q.z * q.z);
+        result[1, 2] = 2 * (q.y * q.z - q.x * q.w);
+
+        result[2, 0] = 2 * (q.x * q.z - q.y * q.w);
+        result[2, 1] = 2 * (q.y * q.z + q.x * q.w);
+        result[2, 2] = 1 - 2 * (q.x * q.x + q.y * q.y);
+
+        return result;
     }
 
     //Setter/Getter
@@ -164,6 +210,48 @@ public class Matrix3x3 : MonoBehaviour
         result[2, 2] = (values[0, 0] * values[1, 1] - values[0, 1] * values[1, 0]) / det;
 
         return result;
+    }
+
+    public Quaternion Quaternion()
+    {
+        Quaternion q = new Quaternion();
+
+        float trace = values[0, 0] + values[1, 1] + values[2, 2];
+
+        if (trace > 0)
+        {
+            float s = Mathf.Sqrt(trace + 1.0f) * 2; // s = 4 * qw
+            q.w = 0.25f * s;
+            q.x = (values[2, 1] - values[1, 2]) / s;
+            q.y = (values[0, 2] - values[2, 0]) / s;
+            q.z = (values[1, 0] - values[0, 1]) / s;
+        }
+        else if ((values[0, 0] > values[1, 1]) && (values[0, 0] > values[2, 2]))
+        {
+            float s = Mathf.Sqrt(1.0f + values[0, 0] - values[1, 1] - values[2, 2]) * 2; // s = 4 * qx
+            q.w = (values[2, 1] - values[1, 2]) / s;
+            q.x = 0.25f * s;
+            q.y = (values[0, 1] + values[1, 0]) / s;
+            q.z = (values[0, 2] + values[2, 0]) / s;
+        }
+        else if (values[1, 1] > values[2, 2])
+        {
+            float s = Mathf.Sqrt(1.0f + values[1, 1] - values[0, 0] - values[2, 2]) * 2; // s = 4 * qy
+            q.w = (values[0, 2] - values[2, 0]) / s;
+            q.x = (values[0, 1] + values[1, 0]) / s;
+            q.y = 0.25f * s;
+            q.z = (values[1, 2] + values[2, 1]) / s;
+        }
+        else
+        {
+            float s = Mathf.Sqrt(1.0f + values[2, 2] - values[0, 0] - values[1, 1]) * 2; // s = 4 * qz
+            q.w = (values[1, 0] - values[0, 1]) / s;
+            q.x = (values[0, 2] + values[2, 0]) / s;
+            q.y = (values[1, 2] + values[2, 1]) / s;
+            q.z = 0.25f * s;
+        }
+
+        return q;
     }
 
     private static bool checkIfValid(float[,] _values)

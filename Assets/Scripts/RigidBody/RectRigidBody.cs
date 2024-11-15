@@ -14,7 +14,7 @@ public class RectRigidBody : MonoBehaviour
     private Matrix3x3 inverseTensor;
 
     //State variables
-    public Particle3D mCOM; //Center of mass. Stores linear velocity and acceleration
+    public Particle3D COM; //Center of mass. Stores linear momentum
     public Vector3 angularVelocity;
     public Vector3 angularAcceleration;
     private Matrix3x3 rotation;
@@ -25,8 +25,8 @@ public class RectRigidBody : MonoBehaviour
 
     private void Start()
     {
-        mCOM.velocity = Vector3.zero;
-        mCOM.acceleration = Vector3.zero;
+        COM.velocity = Vector3.zero;
+        COM.acceleration = Vector3.zero;
         angularVelocity = Vector3.zero;
         angularAcceleration = Vector3.zero;
 
@@ -37,6 +37,9 @@ public class RectRigidBody : MonoBehaviour
         inverseTensor = inertiaTensor.Inverse();
 
         rotation = Matrix3x3.Identity();
+
+        accForces = Vector3.zero;
+        torque = Vector3.zero;
     }
 
     private Matrix3x3 calcInertiaTensor(Vector3 _dimensions)
@@ -54,7 +57,40 @@ public class RectRigidBody : MonoBehaviour
 
     private void FixedUpdate()
     {
+        float deltaTime = Time.fixedDeltaTime;
+        //Apply forces
+        COM.AddForce(accForces);
+
+        //Update linear momentum
+        transform.position = COM.transform.position;
+
+        //Update angular momentum
+        UpdateRotation(deltaTime);
+
+        //reset forces
+        accForces = Vector3.zero;
+        torque = Vector3.zero;
+    }
+
+    private void UpdateRotation(float deltaTime)
+    {
+        Vector3 omega = rotation * inverseTensor * rotation.Transpose() * torque;
+
+        rotation += Matrix3x3.CrossMatrix(omega) * rotation * deltaTime;
         
+        transform.rotation = rotation.Quaternion();
+        rotation = Matrix3x3.QuaternionToMatrix(transform.rotation);
+    }
+
+    public void AddForce(Vector3 newForce, Vector3 applicationPoint)
+    {
+        // Add force to the total force
+        accForces += newForce;
+
+        // Calculate torque produced by the force applied at the application point
+        Vector3 pointRelativeToCenter = applicationPoint - transform.position;
+        Vector3 newTorque = Vector3.Cross(pointRelativeToCenter, newForce);
+        torque += newTorque;
     }
 }
 
