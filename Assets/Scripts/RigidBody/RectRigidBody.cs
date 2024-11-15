@@ -5,23 +5,23 @@ using UnityEngine;
 using UnityEngine.InputSystem.Utilities;
 
 public class RectRigidBody : MonoBehaviour
-{
-    //Center of mass.
-    public Particle3D mCOM; //Stores linear velocity and acceleration
-
-    public Vector3 angularVelocity;
-    public Vector3 angularAcceleration;
-
-    public Vector3 dimensions;
+{ 
+    //Constants
     public float mass = 1.0f;
     private float invMass;
-
-    private Vector3 accForces;
-    private Vector3 torque;
+    public Vector3 dimensions;
     private Matrix3x3 inertiaTensor;
     private Matrix3x3 inverseTensor;
 
+    //State variables
+    public Particle3D mCOM; //Center of mass. Stores linear velocity and acceleration
+    public Vector3 angularVelocity;
+    public Vector3 angularAcceleration;
     private Matrix3x3 rotation;
+
+    //Calculated variables
+    private Vector3 accForces;
+    private Vector3 torque;
 
     private void Start()
     {
