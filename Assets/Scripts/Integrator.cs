@@ -25,4 +25,14 @@ public static class Integrator
         particle.velocity += particle.acceleration * dt;
         particle.velocity *= Mathf.Pow(particle.damping, dt);
     }
+
+    public static void Integrate(RBCenterOfMass particle, float dt)
+    {
+        particle.transform.position += particle.velocity * dt;
+
+        particle.acceleration = particle.accumulatedForces * particle.inverseMass + particle.gravity;
+
+        particle.velocity += particle.acceleration * dt;
+        particle.velocity *= Mathf.Pow(particle.damping, dt);
+    }
 }

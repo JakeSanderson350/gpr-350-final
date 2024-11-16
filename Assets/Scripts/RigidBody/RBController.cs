@@ -16,17 +16,17 @@ public class RBController : MonoBehaviour
         // Apply force with the space key at the center of the object
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            customRigidbody.AddForce(new Vector3(0, 10, 0), transform.position);
+            customRigidbody.AddForce(new Vector3(0, 10, 0), transform.position + new Vector3(0, -0.5f, 0));
         }
 
         // Apply force at different points using arrow keys
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(1, 0, 0));
+            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(1, -0.5f, 0));
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(-1, 0, 0));
+            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(-1, -0.5f, 0));
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {

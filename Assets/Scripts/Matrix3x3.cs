@@ -202,9 +202,11 @@ public class Matrix3x3
         result[0, 0] = (values[1, 1] * values[2, 2] - values[1, 2] * values[2, 1]) / det;
         result[0, 1] = (values[0, 2] * values[2, 1] - values[0, 1] * values[2, 2]) / det;
         result[0, 2] = (values[0, 1] * values[1, 2] - values[0, 2] * values[1, 1]) / det;
+
         result[1, 0] = (values[1, 2] * values[2, 0] - values[1, 0] * values[2, 2]) / det;
         result[1, 1] = (values[0, 0] * values[2, 2] - values[0, 2] * values[2, 0]) / det;
         result[1, 2] = (values[0, 2] * values[1, 0] - values[0, 0] * values[1, 2]) / det;
+
         result[2, 0] = (values[1, 0] * values[2, 1] - values[1, 1] * values[2, 0]) / det;
         result[2, 1] = (values[0, 1] * values[2, 0] - values[0, 0] * values[2, 1]) / det;
         result[2, 2] = (values[0, 0] * values[1, 1] - values[0, 1] * values[1, 0]) / det;

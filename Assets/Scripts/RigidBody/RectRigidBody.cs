@@ -14,9 +14,10 @@ public class RectRigidBody : MonoBehaviour
     private Matrix3x3 inverseTensor;
 
     //State variables
-    public Particle3D COM; //Center of mass. Stores linear momentum
+    public RBCenterOfMass COM; //Center of mass. Stores linear momentum
     public Vector3 angularVelocity;
     public Vector3 angularAcceleration;
+    public float angularDamping = 1.0f;
     private Matrix3x3 rotation;
 
     //Calculated variables
@@ -58,10 +59,12 @@ public class RectRigidBody : MonoBehaviour
     private void FixedUpdate()
     {
         float deltaTime = Time.fixedDeltaTime;
+
         //Apply forces
         COM.AddForce(accForces);
 
         //Update linear momentum
+        Integrator.Integrate(COM, deltaTime);
         transform.position = COM.transform.position;
 
         //Update angular momentum
@@ -74,7 +77,16 @@ public class RectRigidBody : MonoBehaviour
 
     private void UpdateRotation(float deltaTime)
     {
-        Vector3 omega = rotation * inverseTensor * rotation.Transpose() * torque;
+        angularVelocity *= angularDamping;
+
+        angularAcceleration = torque * invMass;
+        angularAcceleration.x /= inertiaTensor[0, 0];
+        angularAcceleration.y /= inertiaTensor[1, 1];
+        angularAcceleration.z /= inertiaTensor[2, 2];
+
+        angularVelocity += angularAcceleration * deltaTime;
+
+        Vector3 omega = rotation * inverseTensor * rotation.Transpose() * angularVelocity;
 
         rotation += Matrix3x3.CrossMatrix(omega) * rotation * deltaTime;
         

@@ -230,7 +230,7 @@ GameObject:
   - component: {fileID: 271183057}
   - component: {fileID: 271183056}
   - component: {fileID: 271183055}
-  - component: {fileID: 271183059}
+  - component: {fileID: 271183063}
   - component: {fileID: 271183060}
   - component: {fileID: 271183062}
   - component: {fileID: 271183061}
@@ -300,29 +300,12 @@ Transform:
   m_GameObject: {fileID: 271183053}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.74, y: -2.3190558, z: 2.36}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &271183059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 271183053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e079d0cbd3ddd4b2db9c0945d1021c3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0, z: 0}
-  damping: 1
-  acceleration: {x: 0, y: 0, z: 0}
-  gravity: {x: 0, y: 0, z: 0}
-  inverseMass: 0
 --- !u!114 &271183060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -361,9 +344,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   dimensions: {x: 0, y: 0, z: 0}
-  COM: {fileID: 271183059}
+  COM: {fileID: 271183063}
   angularVelocity: {x: 0, y: 0, z: 0}
   angularAcceleration: {x: 0, y: 0, z: 0}
+  angularDamping: 0.99
+--- !u!114 &271183063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 271183053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f47cd57cb7f4344b8534d8329de8fa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0, z: 0}
+  damping: 1
+  acceleration: {x: 0, y: 0, z: 0}
+  gravity: {x: 0, y: 0, z: 0}
+  inverseMass: 1
 --- !u!1 &361304958
 GameObject:
   m_ObjectHideFlags: 0
