@@ -2,6 +2,7 @@ using log4net.Util;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
 public class RectRigidBody : MonoBehaviour
@@ -37,7 +38,8 @@ public class RectRigidBody : MonoBehaviour
 
         inertiaTensor = calcInertiaTensor(dimensions);
         inverseTensor = inertiaTensor.Inverse();
-        Debug.Log("Tensor: " + inverseTensor[0, 0] + ", " + inverseTensor[1, 1] + ", " + inverseTensor[2, 2]);
+        Debug.Log(inertiaTensor.ToStringValues());
+        Debug.Log(inverseTensor.ToStringValues());
 
         rotation = Matrix3x3.Identity();
 
@@ -54,8 +56,6 @@ public class RectRigidBody : MonoBehaviour
         tensor[0, 0] = volume * (_dimensions.y * _dimensions.y + _dimensions.z * _dimensions.z) / 12.0f;
         tensor[1, 1] = volume * (_dimensions.x * _dimensions.x + _dimensions.z * _dimensions.z) / 12.0f;
         tensor[2, 2] = volume * (_dimensions.x * _dimensions.x + _dimensions.y * _dimensions.y) / 12.0f;
-
-        Debug.Log("Tensor: " + tensor[0, 0] + ", " + tensor[1,1] + ", " + tensor[2,2]);
 
         return tensor;
     }
@@ -84,9 +84,10 @@ public class RectRigidBody : MonoBehaviour
         angularVelocity *= angularDamping;
 
         angularAcceleration = torque * invMass;
-        angularAcceleration.x /= inertiaTensor[0, 0];
-        angularAcceleration.y /= inertiaTensor[1, 1];
-        angularAcceleration.z /= inertiaTensor[2, 2];
+        //angularAcceleration.x /= inertiaTensor[0, 0];
+        //angularAcceleration.y /= inertiaTensor[1, 1];
+        //angularAcceleration.z /= inertiaTensor[2, 2];
+        angularAcceleration = inverseTensor * angularAcceleration;
 
         angularVelocity += angularAcceleration * deltaTime;
 
@@ -104,93 +105,9 @@ public class RectRigidBody : MonoBehaviour
         accForces += newForce;
 
         // Calculate torque produced by the force applied at the application point
+        //TODO check if in bounds of rigidbody
         Vector3 pointRelativeToCenter = applicationPoint - COM.transform.position;
         Vector3 newTorque = Vector3.Cross(pointRelativeToCenter, newForce);
         torque += newTorque;
     }
 }
-
-//// Public properties
-//public Vector3 velocity;
-//public Vector3 angularVelocity;
-//public Vector3 acceleration;
-//public Vector3 angularAcceleration;
-//public float mass = 1.0f;
-
-//// Gravity
-//public Vector3 gravity = new Vector3(0, -9.81f, 0);
-
-//// Size of the box (used for moment of inertia)
-//public Vector3 dimensions = new Vector3(1f, 1f, 1f);
-
-//// Private properties
-//private Vector3 force;
-//private Vector3 torque;
-
-//private float I_x, I_y, I_z;
-
-//void Start()
-//{
-//    // Initialize variables
-//    velocity = Vector3.zero;
-//    angularVelocity = Vector3.zero;
-//    force = Vector3.zero;
-//    torque = Vector3.zero;
-
-//    // Calculate the moments of inertia for the box (about its center of mass)
-//    I_x = (1f / 12f) * mass * (Mathf.Pow(dimensions.y, 2) + Mathf.Pow(dimensions.z, 2));
-//    I_y = (1f / 12f) * mass * (Mathf.Pow(dimensions.x, 2) + Mathf.Pow(dimensions.z, 2));
-//    I_z = (1f / 12f) * mass * (Mathf.Pow(dimensions.x, 2) + Mathf.Pow(dimensions.y, 2));
-//}
-
-//void Update()
-//{
-//    // Update physics calculations
-//    ApplyForces(Time.deltaTime);
-//    ApplyRotation(Time.deltaTime);
-
-//    // Apply position changes
-//    transform.position += velocity * Time.deltaTime;
-//    transform.rotation = Quaternion.Euler(angularVelocity * Time.deltaTime) * transform.rotation;
-
-//    // Reset forces and torques
-//    force = Vector3.zero;
-//    torque = Vector3.zero;
-//}
-
-//public void AddForce(Vector3 newForce, Vector3 applicationPoint)
-//{
-//    // Add force to the total force
-//    force += newForce;
-
-//    // Calculate torque produced by the force applied at the application point
-//    Vector3 pointRelativeToCenter = applicationPoint - transform.position;
-//    Vector3 newTorque = Vector3.Cross(pointRelativeToCenter, newForce);
-//    torque += newTorque;
-//}
-
-//private void ApplyForces(float deltaTime)
-//{
-//    // Apply gravity
-//    force += gravity * mass;
-
-//    // Calculate acceleration
-//    acceleration = force / mass;
-
-//    // Update velocity
-//    velocity += acceleration * deltaTime;
-//}
-
-//private void ApplyRotation(float deltaTime)
-//{
-//    // Calculate angular acceleration
-//    angularAcceleration = torque / mass; // This is the simplified case
-
-//    // Correct angular acceleration calculation based on inertia (simplified)
-//    angularAcceleration.x /= I_x;
-//    angularAcceleration.y /= I_y;
-//    angularAcceleration.z /= I_z;
-
-//    // Update angular velocity
-//    angularVelocity += angularAcceleration * deltaTime;
-//}

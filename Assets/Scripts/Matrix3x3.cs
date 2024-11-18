@@ -256,6 +256,13 @@ public class Matrix3x3
         return q;
     }
 
+    public string ToStringValues()
+    {
+        return "Matrix: [ " + values[0,0] + ", " + values[0,1] + ", " + values[0,2] + " ]\n" +
+            "        [ " + values[1, 0] + ", " + values[1, 1] + ", " + values[1, 2] + " ]\n" +
+            "        [ " + values[2, 0] + ", " + values[2, 1] + ", " + values[2, 2] + " ]\n";
+    }
+
     private static bool checkIfValid(float[,] _values)
     {
         return (_values.GetLength(0) != 3 || _values.GetLength(1) != 3 || _values.GetLength(2) != 3);
