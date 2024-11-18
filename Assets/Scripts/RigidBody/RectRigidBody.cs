@@ -12,6 +12,7 @@ public class RectRigidBody : MonoBehaviour
     public Vector3 dimensions;
     private Matrix3x3 inertiaTensor;
     private Matrix3x3 inverseTensor;
+    private const int TURN_SPEED = 250;
 
     //State variables
     public RBCenterOfMass COM; //Center of mass. Stores linear momentum
@@ -36,6 +37,7 @@ public class RectRigidBody : MonoBehaviour
 
         inertiaTensor = calcInertiaTensor(dimensions);
         inverseTensor = inertiaTensor.Inverse();
+        Debug.Log("Tensor: " + inverseTensor[0, 0] + ", " + inverseTensor[1, 1] + ", " + inverseTensor[2, 2]);
 
         rotation = Matrix3x3.Identity();
 
@@ -52,6 +54,8 @@ public class RectRigidBody : MonoBehaviour
         tensor[0, 0] = volume * (_dimensions.y * _dimensions.y + _dimensions.z * _dimensions.z) / 12.0f;
         tensor[1, 1] = volume * (_dimensions.x * _dimensions.x + _dimensions.z * _dimensions.z) / 12.0f;
         tensor[2, 2] = volume * (_dimensions.x * _dimensions.x + _dimensions.y * _dimensions.y) / 12.0f;
+
+        Debug.Log("Tensor: " + tensor[0, 0] + ", " + tensor[1,1] + ", " + tensor[2,2]);
 
         return tensor;
     }
@@ -88,7 +92,7 @@ public class RectRigidBody : MonoBehaviour
 
         Vector3 omega = rotation * inverseTensor * rotation.Transpose() * angularVelocity;
 
-        rotation += Matrix3x3.CrossMatrix(omega) * rotation * deltaTime;
+        rotation += Matrix3x3.CrossMatrix(TURN_SPEED * omega) * rotation * deltaTime;
         
         transform.rotation = rotation.Quaternion();
         rotation = Matrix3x3.QuaternionToMatrix(transform.rotation);
@@ -100,7 +104,7 @@ public class RectRigidBody : MonoBehaviour
         accForces += newForce;
 
         // Calculate torque produced by the force applied at the application point
-        Vector3 pointRelativeToCenter = applicationPoint - transform.position;
+        Vector3 pointRelativeToCenter = applicationPoint - COM.transform.position;
         Vector3 newTorque = Vector3.Cross(pointRelativeToCenter, newForce);
         torque += newTorque;
     }

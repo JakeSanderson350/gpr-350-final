@@ -22,19 +22,19 @@ public class RBController : MonoBehaviour
         // Apply force at different points using arrow keys
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(1, -0.5f, 0));
+            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(1.125f, -0.5f, 0));
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(-1, -0.5f, 0));
+            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(-1.125f, -0.5f, 0));
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(0, 0, 1));
+            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(0, -0.5f, 1.7f));
         }
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(0, 0, -1));
+            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(0, 0, -1.7f));
         }
     }
 }
