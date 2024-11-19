@@ -81,33 +81,52 @@ public class RectRigidBody : MonoBehaviour
 
     private void UpdateRotation(float deltaTime)
     {
+        //https://www.youtube.com/watch?v=4r_EvmPKOvY
+
         angularVelocity *= angularDamping;
 
+        //Update acccelration based on torque and inertiaTensor
         angularAcceleration = torque * invMass;
-        //angularAcceleration.x /= inertiaTensor[0, 0];
-        //angularAcceleration.y /= inertiaTensor[1, 1];
-        //angularAcceleration.z /= inertiaTensor[2, 2];
         angularAcceleration = inverseTensor * angularAcceleration;
 
         angularVelocity += angularAcceleration * deltaTime;
 
+        //Calculate angular momentum based on angularVelocity, rotation, and inertiaTensor
         Vector3 omega = rotation * inverseTensor * rotation.Transpose() * angularVelocity;
 
+        //Update rotation matrix
         rotation += Matrix3x3.CrossMatrix(TURN_SPEED * omega) * rotation * deltaTime;
         
+        //Change rotation of game object
         transform.rotation = rotation.Quaternion();
+
+        //Get new rotation matrix based off of rotation quaternion to avoid
+        //accumulated floating point errors that break the rotation matrix
         rotation = Matrix3x3.QuaternionToMatrix(transform.rotation);
     }
 
-    public void AddForce(Vector3 newForce, Vector3 applicationPoint)
+    public void AddForce(Vector3 _newForce, Vector3 _applicationPoint)
     {
-        // Add force to the total force
-        accForces += newForce;
+        accForces += _newForce;
 
         // Calculate torque produced by the force applied at the application point
         //TODO check if in bounds of rigidbody
-        Vector3 pointRelativeToCenter = applicationPoint - COM.transform.position;
-        Vector3 newTorque = Vector3.Cross(pointRelativeToCenter, newForce);
+        Vector3 pointRelativeToCenter = _applicationPoint - COM.transform.position;
+        Vector3 newTorque = Vector3.Cross(pointRelativeToCenter, _newForce);
         torque += newTorque;
+    }
+
+    public Vector3 GetVelocityAtPoint(Vector3 _point)
+    {
+        //https://physics.stackexchange.com/questions/829797/how-to-calculate-the-velocity-of-a-point-on-a-rigid-body-that-is-both-translatin
+
+        //Vector from center to point
+        Vector3 r = _point - COM.transform.position;
+
+        //Calculate how rotation affects velocity
+        Vector3 rotationVelocity = Vector3.Cross(angularVelocity, r);
+
+        //Add linear and rotational velocities
+        return COM.velocity + rotationVelocity;
     }
 }
