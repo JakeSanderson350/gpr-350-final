@@ -95,7 +95,7 @@ public class RectRigidBody : MonoBehaviour
         Vector3 omega = rotation * inverseTensor * rotation.Transpose() * angularVelocity;
 
         //Update rotation matrix
-        rotation += Matrix3x3.CrossMatrix(TURN_SPEED * omega) * rotation * deltaTime;
+        rotation += Matrix3x3.CrossMatrix(/*TURN_SPEED * */omega) * rotation * deltaTime;
         
         //Change rotation of game object
         transform.rotation = rotation.Quaternion();

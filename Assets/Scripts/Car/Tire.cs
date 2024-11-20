@@ -19,6 +19,7 @@ public class Tire : MonoBehaviour
 
     //Acceleration variables
     private Vector3 accelerationForce;
+    public float topSpeed = 100;
 
     //Steering variables
     private Vector3 steeringForce;
@@ -27,15 +28,31 @@ public class Tire : MonoBehaviour
     //UpdateForce(), shoots ray and if ray hits update everything
     //GetForce()
 
+    private void Start()
+    {
+        suspensionForce = Vector3.zero;
+        accelerationForce = Vector3.zero;
+        steeringForce = Vector3.zero;
+    }
+
     private void FixedUpdate()
     {
         //shoot ray downwards
         //If ray hits then update forces
     }
 
-    private void UpdateForces()
+    public void UpdateForces(float _accelerationInput, Vector3 _carForward)
     {
-        
+        //UpdateSuspension();
+        UpdateAcceleration(_accelerationInput, _carForward);
+        UpdateSteering();
+
+        accForces = suspensionForce + accelerationForce + steeringForce;
+    }
+
+    public Vector3 GetForces()
+    {
+        return accForces;
     }
 
     private void UpdateSuspension() //UpdateSuspension, needs tire transform, springStrength, springRestDistance
@@ -56,9 +73,22 @@ public class Tire : MonoBehaviour
         suspensionForce = suspensionDirection * forceMagnitude;
     }
 
-    private void UpdateAcceleration()
+    private void UpdateAcceleration(float _accelerationInput, Vector3 _carForward)
     {
+        //World space direction of acceleration force
+        Vector3 accelerationDirection = transform.forward;
 
+        if (_accelerationInput > 0.0f)
+        {
+            float carSpeed = Vector3.Dot(_carForward, carRB.COM.velocity);
+
+            //Speed as float 0-1 based on how close to top speed
+            float normalizedSpeed = Mathf.Clamp01(Mathf.Abs(carSpeed) / topSpeed);
+
+            float powerToTire = 1.0f * _accelerationInput; //change 1.0f to a lookup curve that uses normalizedSpeed
+
+            accelerationForce = accelerationDirection * powerToTire;
+        }
     }
 
     private void UpdateSteering() //UpdateSteering, needs tire transform, tireGripFactor 1 max grip 0 no grip
@@ -75,7 +105,7 @@ public class Tire : MonoBehaviour
         float deltaVelocity = -steeringVelocity * tireGripFactor;
 
         //Change to acceleration to change velocity of car by correct amount
-        float deltaAcceleration = deltaVelocity / Time.fixedDeltaTime;
+        float deltaAcceleration = deltaVelocity/* / Time.fixedDeltaTime*/;
 
         steeringForce = steeringDirection * deltaAcceleration;
     }
