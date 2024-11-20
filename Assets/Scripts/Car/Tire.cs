@@ -47,7 +47,7 @@ public class Tire : MonoBehaviour
         UpdateAcceleration(_accelerationInput, _carForward);
         UpdateSteering();
 
-        accForces = suspensionForce + accelerationForce + steeringForce;
+        accForces = suspensionForce + accelerationForce + (5 * steeringForce);
     }
 
     public Vector3 GetForces()

@@ -113,7 +113,7 @@ public class RectRigidBody : MonoBehaviour
         //TODO check if in bounds of rigidbody
         Vector3 pointRelativeToCenter = _applicationPoint - COM.transform.position;
         Vector3 newTorque = Vector3.Cross(pointRelativeToCenter, _newForce);
-        torque += newTorque;
+        torque -= newTorque; //Changed this to negative and its "working" not sure why
     }
 
     public Vector3 GetVelocityAtPoint(Vector3 _point)
