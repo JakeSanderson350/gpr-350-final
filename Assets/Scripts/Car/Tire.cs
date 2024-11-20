@@ -48,6 +48,7 @@ public class Tire : MonoBehaviour
         UpdateSteering();
 
         accForces = suspensionForce + accelerationForce + (5 * steeringForce);
+        Debug.DrawLine(transform.position, transform.position + accForces, Color.green);
     }
 
     public Vector3 GetForces()
@@ -63,7 +64,7 @@ public class Tire : MonoBehaviour
         Vector3 tireWorldVelocity = carRB.GetVelocityAtPoint(transform.position);
 
         //Offset of spring length and distance to floor
-        float offset = suspensionRestLength /*- rayDistance*/;
+        float offset = suspensionRestLength - (suspensionRestLength - 0.01f) /*- rayDistance*/;
 
         //Velocity of tire moving up and down due to suspension
         float springVelocity = Vector3.Dot(suspensionDirection, tireWorldVelocity);

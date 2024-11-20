@@ -22,8 +22,8 @@ public class RBController : MonoBehaviour
         // Apply force at different points using arrow keys
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            customRigidbody.AddForce(new Vector3(10, 0, 0), transform.position + new Vector3(-1.25f, 0.5f, 2.5f));
-            Debug.DrawLine(transform.position + new Vector3(-1.5f, 0.5f, 2.5f), transform.position + new Vector3(-1.25f, 0.5f, 2.5f), Color.green, 3.0f);
+            customRigidbody.AddForce(new Vector3(10, 0, 0), transform.position + new Vector3(-1.25f, -0.5f, 2.5f));
+            Debug.DrawLine(transform.position + new Vector3(-1.5f, -0.5f, 2.5f), transform.position + new Vector3(-1.25f, -0.5f, 2.5f), Color.green, 3.0f);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {

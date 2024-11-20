@@ -13,7 +13,7 @@ public class RectRigidBody : MonoBehaviour
     public Vector3 dimensions;
     private Matrix3x3 inertiaTensor;
     private Matrix3x3 inverseTensor;
-    private const int TURN_SPEED = 250;
+    private const int TURN_SPEED = 20;
 
     //State variables
     public RBCenterOfMass COM; //Center of mass. Stores linear momentum
@@ -89,7 +89,7 @@ public class RectRigidBody : MonoBehaviour
         angularAcceleration = torque * invMass;
         angularAcceleration = inverseTensor * angularAcceleration;
 
-        angularVelocity += angularAcceleration * deltaTime;
+        angularVelocity += angularAcceleration * (TURN_SPEED * deltaTime);
 
         //Calculate angular momentum based on angularVelocity, rotation, and inertiaTensor
         Vector3 omega = rotation * inverseTensor * rotation.Transpose() * angularVelocity;
