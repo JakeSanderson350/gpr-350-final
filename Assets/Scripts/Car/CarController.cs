@@ -60,6 +60,8 @@ public class CarController : MonoBehaviour
 
             tire.UpdateForces(accelerationInput, transform.forward);
 
+            //Debug.DrawLine(tire.transform.position, tire.transform.forward * 0.5f);
+
             carRB.AddForce(tire.GetForces(), tire.transform.position);
         }
         foreach (Tire tire in backTires)

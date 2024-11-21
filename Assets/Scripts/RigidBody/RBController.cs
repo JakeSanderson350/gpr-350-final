@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class RBController : MonoBehaviour
 {
-    private RectRigidBody customRigidbody;
+    private RectRigidBody rb;
 
     void Start()
     {
-        customRigidbody = GetComponent<RectRigidBody>();
+        rb = GetComponent<RectRigidBody>();
     }
 
     void Update()
@@ -16,26 +16,26 @@ public class RBController : MonoBehaviour
         // Apply force with the space key at the center of the object
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            customRigidbody.AddForce(new Vector3(0, 10, 0), transform.position + new Vector3(0, -0.5f, 0));
+            rb.AddForce(new Vector3(0, 10, 0), transform.position + new Vector3(0, -0.5f, 0));
         }
 
         // Apply force at different points using arrow keys
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            customRigidbody.AddForce(new Vector3(10, 0, 0), transform.position + new Vector3(-1.25f, -0.5f, 2.5f));
+            rb.AddForce(new Vector3(10, 0, 0), transform.position + new Vector3(-1.25f, -0.5f, 2.5f));
             Debug.DrawLine(transform.position + new Vector3(-1.5f, -0.5f, 2.5f), transform.position + new Vector3(-1.25f, -0.5f, 2.5f), Color.green, 3.0f);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(-1.125f, -0.5f, 0));
+            rb.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(-1.125f, -0.5f, 0));
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(0, -0.5f, 1.7f));
+            rb.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(0, -0.5f, 1.7f));
         }
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            customRigidbody.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(0, 0, -1.7f));
+            rb.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(0, 0, -1.7f));
         }
     }
 }

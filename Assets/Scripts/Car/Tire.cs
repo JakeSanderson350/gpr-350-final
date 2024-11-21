@@ -15,7 +15,7 @@ public class Tire : MonoBehaviour
     private Vector3 suspensionForce;
     public float suspensionRestLength = 0.5f;
     public float suspensionStrength = 10;
-    public float suspensionDamping = 20;
+    public float suspensionDamping = 0.5f;
 
     //Acceleration variables
     private Vector3 accelerationForce;
@@ -43,12 +43,19 @@ public class Tire : MonoBehaviour
 
     public void UpdateForces(float _accelerationInput, Vector3 _carForward)
     {
-        //UpdateSuspension();
-        UpdateAcceleration(_accelerationInput, _carForward);
-        UpdateSteering();
+        if (Physics.Raycast(transform.position, -transform.up, out tireRay, suspensionRestLength + 0.5f))
+        {
+            //UpdateSuspension();
+            UpdateAcceleration(_accelerationInput, _carForward);
+            UpdateSteering();
+        }
 
         accForces = suspensionForce + accelerationForce + (5 * steeringForce);
         Debug.DrawLine(transform.position, transform.position + accForces, Color.green);
+
+        suspensionForce = Vector3.zero;
+        accelerationForce = Vector3.zero;
+        steeringForce = Vector3.zero;
     }
 
     public Vector3 GetForces()
@@ -64,14 +71,14 @@ public class Tire : MonoBehaviour
         Vector3 tireWorldVelocity = carRB.GetVelocityAtPoint(transform.position);
 
         //Offset of spring length and distance to floor
-        float offset = suspensionRestLength - (suspensionRestLength - 0.01f) /*- rayDistance*/;
+        float offset = suspensionRestLength - tireRay.distance;
 
         //Velocity of tire moving up and down due to suspension
         float springVelocity = Vector3.Dot(suspensionDirection, tireWorldVelocity);
 
         float forceMagnitude = (offset * suspensionStrength) - (springVelocity * suspensionDamping);
 
-        suspensionForce = suspensionDirection * forceMagnitude;
+        if (forceMagnitude > 0) suspensionForce = suspensionDirection * forceMagnitude;
     }
 
     private void UpdateAcceleration(float _accelerationInput, Vector3 _carForward)

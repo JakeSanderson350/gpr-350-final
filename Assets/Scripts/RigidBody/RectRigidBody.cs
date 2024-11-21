@@ -34,6 +34,8 @@ public class RectRigidBody : MonoBehaviour
         angularAcceleration = Vector3.zero;
 
         dimensions = transform.lossyScale;
+        Debug.Log(dimensions);
+        //dimensions = Vector3.one;
         invMass = 1.0f / mass;
 
         inertiaTensor = calcInertiaTensor(dimensions);
@@ -89,7 +91,7 @@ public class RectRigidBody : MonoBehaviour
         angularAcceleration = torque * invMass;
         angularAcceleration = inverseTensor * angularAcceleration;
 
-        angularVelocity += angularAcceleration * (TURN_SPEED * deltaTime);
+        angularVelocity += angularAcceleration * (/*TURN_SPEED * */deltaTime);
 
         //Calculate angular momentum based on angularVelocity, rotation, and inertiaTensor
         Vector3 omega = rotation * inverseTensor * rotation.Transpose() * angularVelocity;
