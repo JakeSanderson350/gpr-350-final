@@ -61,6 +61,7 @@ public class CarController : MonoBehaviour
             tire.UpdateForces(accelerationInput, transform.forward);
 
             //Debug.DrawLine(tire.transform.position, tire.transform.forward * 0.5f);
+            Debug.DrawLine(tire.transform.position, tire.transform.position + (tire.transform.forward * 2.0f), Color.blue);
 
             carRB.AddForce(tire.GetForces(), tire.transform.position);
         }

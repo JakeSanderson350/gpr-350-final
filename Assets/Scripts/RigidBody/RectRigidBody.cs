@@ -55,9 +55,9 @@ public class RectRigidBody : MonoBehaviour
         Matrix3x3 tensor = Matrix3x3.Identity();
         float volume = _dimensions.x * _dimensions.y * _dimensions.z;
 
-        tensor[0, 0] = volume * (_dimensions.y * _dimensions.y + _dimensions.z * _dimensions.z) / 12.0f;
-        tensor[1, 1] = volume * (_dimensions.x * _dimensions.x + _dimensions.z * _dimensions.z) / 12.0f;
-        tensor[2, 2] = volume * (_dimensions.x * _dimensions.x + _dimensions.y * _dimensions.y) / 12.0f;
+        tensor[0, 0] = mass * (_dimensions.y * _dimensions.y + _dimensions.z * _dimensions.z) / 12.0f;
+        tensor[1, 1] = mass * (_dimensions.x * _dimensions.x + _dimensions.z * _dimensions.z) / 12.0f;
+        tensor[2, 2] = mass * (_dimensions.x * _dimensions.x + _dimensions.y * _dimensions.y) / 12.0f;
 
         return tensor;
     }

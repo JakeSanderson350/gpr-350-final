@@ -15,7 +15,7 @@ public class Tire : MonoBehaviour
     private Vector3 suspensionForce;
     public float suspensionRestLength = 0.5f;
     public float suspensionStrength = 10;
-    public float suspensionDamping = 0.5f;
+    public float suspensionDamping = 10.0f;
 
     //Acceleration variables
     private Vector3 accelerationForce;
@@ -43,14 +43,14 @@ public class Tire : MonoBehaviour
 
     public void UpdateForces(float _accelerationInput, Vector3 _carForward)
     {
-        if (Physics.Raycast(transform.position, -transform.up, out tireRay, suspensionRestLength + 0.5f))
+        if (Physics.Raycast(transform.position, -transform.up, out tireRay, suspensionRestLength + 0.1f))
         {
-            //UpdateSuspension();
+            UpdateSuspension();
             UpdateAcceleration(_accelerationInput, _carForward);
             UpdateSteering();
         }
 
-        accForces = suspensionForce + accelerationForce + (5 * steeringForce);
+        accForces = suspensionForce + accelerationForce + (1 * steeringForce);
         Debug.DrawLine(transform.position, transform.position + accForces, Color.green);
 
         suspensionForce = Vector3.zero;
