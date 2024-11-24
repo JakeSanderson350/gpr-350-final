@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class RBCenterOfMass : Particle3D
 {
-
+    public Vector3 linearMomentum = Vector3.zero;
 
     public new void FixedUpdate()
     {
+        linearMomentum += accumulatedForces;
+
         DoFixedUpdate(Time.fixedDeltaTime);
     }
 

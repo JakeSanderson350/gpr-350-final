@@ -15,7 +15,7 @@ public class Tire : MonoBehaviour
     private Vector3 suspensionForce;
     public float suspensionRestLength = 0.5f;
     public float suspensionStrength = 10;
-    public float suspensionDamping = 10.0f;
+    public float suspensionDamping = 50.0f;
 
     //Acceleration variables
     private Vector3 accelerationForce;
@@ -50,7 +50,7 @@ public class Tire : MonoBehaviour
             UpdateSteering();
         }
 
-        accForces = suspensionForce + accelerationForce + (1 * steeringForce);
+        accForces = suspensionForce + accelerationForce + steeringForce;
         Debug.DrawLine(transform.position, transform.position + accForces, Color.green);
 
         suspensionForce = Vector3.zero;

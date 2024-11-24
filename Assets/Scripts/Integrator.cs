@@ -30,9 +30,11 @@ public static class Integrator
     {
         particle.transform.position += particle.velocity * dt;
 
-        particle.acceleration = particle.accumulatedForces * particle.inverseMass + particle.gravity;
+        //particle.acceleration = particle.accumulatedForces * particle.inverseMass + particle.gravity;
 
-        particle.velocity += particle.acceleration * dt;
+        //particle.velocity += particle.acceleration * dt;
+
+        particle.velocity = particle.linearMomentum * particle.inverseMass;
         particle.velocity *= Mathf.Pow(particle.damping, dt);
     }
 }

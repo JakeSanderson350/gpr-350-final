@@ -10,6 +10,7 @@ public class CarController : MonoBehaviour
     [SerializeField]
     private List<Tire> frontTires, backTires;
     public float tireTurnSpeed = 1;
+    private float tireAngle = 0.0f;
 
     private float accelerationInput;
     private float brakeInput;
@@ -31,9 +32,10 @@ public class CarController : MonoBehaviour
         {
             foreach (Tire tire in frontTires)
             {
-                if (tire.transform.rotation.y > -45)
+                if (tireAngle > -90)
                 {
                     tire.transform.Rotate(0, -tireTurnSpeed, 0);
+                    tireAngle -= tireTurnSpeed;
                 }
             }
         }
@@ -41,9 +43,10 @@ public class CarController : MonoBehaviour
         {
             foreach (Tire tire in frontTires)
             {
-                if (tire.transform.rotation.y < 45)
+                if (tireAngle < 90)
                 {
                     tire.transform.Rotate(0, tireTurnSpeed, 0);
+                    tireAngle += tireTurnSpeed;
                 }
             }
         }
