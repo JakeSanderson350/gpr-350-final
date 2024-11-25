@@ -14,20 +14,20 @@ public class RectRigidBody : MonoBehaviour
     public Vector3 gravity = Vector3.zero;
     private Matrix3x3 inertiaTensor;
     private Matrix3x3 inverseTensor;
-    private const int TURN_SPEED = 20;
 
     //State variables
     public RBCenterOfMass COM; //Center of mass. Stores linear momentum
-
     public Vector3 angularMomentum;
     private Vector3 angularVelocity;
-
     public float angularDamping = 1.0f;
     private Matrix3x3 rotation;
 
     //Calculated variables
     private Vector3 accForces;
     private Vector3 torque;
+
+    //Collision
+    public OBB rbOBB;
 
     private void Start()
     {
@@ -51,6 +51,8 @@ public class RectRigidBody : MonoBehaviour
 
         accForces = Vector3.zero;
         torque = Vector3.zero;
+
+        rbOBB = gameObject.AddComponent<OBB>();
     }
 
     private Matrix3x3 calcInertiaTensor(Vector3 _dimensions)
@@ -84,11 +86,14 @@ public class RectRigidBody : MonoBehaviour
         //reset forces
         accForces = Vector3.zero;
         torque = Vector3.zero;
+
+        //Update OBB
+        rbOBB.transform.position = transform.position;
+        rbOBB.transform.rotation = rotation.Quaternion();
     }
 
     private void UpdateRotation(float deltaTime)
     {
-        //https://www.youtube.com/watch?v=4r_EvmPKOvY
         //https://www.cs.cmu.edu/~baraff/pbm/rigid1.pdf
 
         angularMomentum += torque;
@@ -126,8 +131,6 @@ public class RectRigidBody : MonoBehaviour
         //Vector from center to point
         Vector3 r = _point - COM.transform.position;
 
-        //Vector3 angularVelocity = rotation * inverseTensor * rotation.Transpose() * angularMomentum;
-        Vector3 angularVelocity = Vector3.zero;
         //Calculate how rotation affects velocity
         Vector3 rotationVelocity = Vector3.Cross(angularVelocity, r);
 

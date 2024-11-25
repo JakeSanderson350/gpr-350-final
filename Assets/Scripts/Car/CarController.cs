@@ -56,11 +56,6 @@ public class CarController : MonoBehaviour
     {
         foreach (Tire tire in frontTires)
         {
-            if(tire.transform.forward != transform.forward)
-            {
-                tireTurnSpeed = 1.0f;
-            }
-
             tire.UpdateForces(accelerationInput, transform.forward);
 
             //Debug.DrawLine(tire.transform.position, tire.transform.forward * 0.5f);

@@ -14,8 +14,8 @@ public class Tire : MonoBehaviour
     //suspension variables
     private Vector3 suspensionForce;
     public float suspensionRestLength = 0.5f;
-    public float suspensionStrength = 10;
-    public float suspensionDamping = 50.0f;
+    public float suspensionStrength = 600;
+    public float suspensionDamping = 100.0f;
 
     //Acceleration variables
     private Vector3 accelerationForce;
@@ -25,20 +25,11 @@ public class Tire : MonoBehaviour
     private Vector3 steeringForce;
     public float tireGripFactor = 1.0f;
 
-    //UpdateForce(), shoots ray and if ray hits update everything
-    //GetForce()
-
     private void Start()
     {
         suspensionForce = Vector3.zero;
         accelerationForce = Vector3.zero;
         steeringForce = Vector3.zero;
-    }
-
-    private void FixedUpdate()
-    {
-        //shoot ray downwards
-        //If ray hits then update forces
     }
 
     public void UpdateForces(float _accelerationInput, Vector3 _carForward)
@@ -68,7 +59,8 @@ public class Tire : MonoBehaviour
         //World space direction of suspension force
         Vector3 suspensionDirection = transform.up;
 
-        Vector3 tireWorldVelocity = carRB.GetVelocityAtPoint(transform.position);
+        //Vector3 tireWorldVelocity = carRB.GetVelocityAtPoint(transform.position);
+        Vector3 tireWorldVelocity = carRB.COM.velocity; //Only works with linear velocity no angular?
 
         //Offset of spring length and distance to floor
         float offset = suspensionRestLength - tireRay.distance;
@@ -78,7 +70,10 @@ public class Tire : MonoBehaviour
 
         float forceMagnitude = (offset * suspensionStrength) - (springVelocity * suspensionDamping);
 
-        if (forceMagnitude > 0) suspensionForce = suspensionDirection * forceMagnitude;
+        if (forceMagnitude > 0)
+        {
+            suspensionForce = suspensionDirection * forceMagnitude;
+        }
     }
 
     private void UpdateAcceleration(float _accelerationInput, Vector3 _carForward)
@@ -112,9 +107,6 @@ public class Tire : MonoBehaviour
         //Apply grip factor and negate to get the correct force to apply
         float deltaVelocity = -steeringVelocity * tireGripFactor;
 
-        //Change to acceleration to change velocity of car by correct amount
-        float deltaAcceleration = deltaVelocity/* / Time.fixedDeltaTime*/;
-
-        steeringForce = steeringDirection * deltaAcceleration;
+        steeringForce = steeringDirection * deltaVelocity;
     }
 }
