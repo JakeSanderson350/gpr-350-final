@@ -6,9 +6,12 @@ public class RBController : MonoBehaviour
 {
     private RectRigidBody rb;
 
+    private Vector3 dimensions;
+
     void Start()
     {
         rb = GetComponent<RectRigidBody>();
+        dimensions = rb.dimensions;
     }
 
     void Update()
