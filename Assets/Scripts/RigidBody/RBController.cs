@@ -7,11 +7,15 @@ public class RBController : MonoBehaviour
     private RectRigidBody rb;
 
     private Vector3 dimensions;
+    private Vector3 halfLengths;
+
+    private Vector3 applicationPos;
 
     void Start()
     {
         rb = GetComponent<RectRigidBody>();
         dimensions = rb.dimensions;
+        halfLengths = dimensions / 2;
     }
 
     void Update()
@@ -25,20 +29,27 @@ public class RBController : MonoBehaviour
         // Apply force at different points using arrow keys
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            rb.AddForce(new Vector3(10, 0, 0), transform.position + new Vector3(-1.25f, -0.5f, 2.5f));
-            Debug.DrawLine(transform.position + new Vector3(-1.5f, -0.5f, 2.5f), transform.position + new Vector3(-1.25f, -0.5f, 2.5f), Color.green, 3.0f);
+            applicationPos = new Vector3(-halfLengths.x, -halfLengths.y, halfLengths.z);
+            rb.AddForce(new Vector3(10, 0, 0), transform.position + applicationPos);
+            Debug.DrawLine(transform.position + new Vector3(-1.5f, -0.5f, 2.5f), transform.position + applicationPos, Color.green, 3.0f);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            rb.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(-1.125f, -0.5f, 0));
+            applicationPos = new Vector3(-halfLengths.x, halfLengths.y, -halfLengths.z);
+            rb.AddForce(new Vector3(10, 0, 0), transform.position + applicationPos);
+            Debug.DrawLine(transform.position + new Vector3(-1.5f, 0.5f, -2.5f), transform.position + applicationPos, Color.green, 3.0f);
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            rb.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(0, -0.5f, 1.7f));
+            applicationPos = new Vector3(halfLengths.x, -halfLengths.y, halfLengths.z);
+            rb.AddForce(new Vector3(0, 10, 0), transform.position + applicationPos);
+            Debug.DrawLine(transform.position + new Vector3(1.25f, -0.75f, 2.5f), transform.position + applicationPos, Color.green, 3.0f);
         }
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            rb.AddForce(new Vector3(0, 1, 0), transform.position + new Vector3(0, 0, -1.7f));
+            applicationPos = new Vector3(-halfLengths.x, -halfLengths.y, -halfLengths.z);
+            rb.AddForce(new Vector3(0, 10, 0), transform.position + applicationPos);
+            Debug.DrawLine(transform.position + new Vector3(-1.25f, -0.75f, -2.5f), transform.position + applicationPos, Color.green, 3.0f);
         }
     }
 }
