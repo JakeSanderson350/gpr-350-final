@@ -19,7 +19,9 @@ public class Tire : MonoBehaviour
 
     //Acceleration variables
     private Vector3 accelerationForce;
+    private Vector3 brakingForce;
     public float topSpeed = 100;
+    public float brakeStrength = 0.5f;
 
     //Steering variables
     private Vector3 steeringForce;
@@ -32,20 +34,22 @@ public class Tire : MonoBehaviour
         steeringForce = Vector3.zero;
     }
 
-    public void UpdateForces(float _accelerationInput, Vector3 _carForward)
+    public void UpdateForces(float _accelerationInput, float _brakeInput, Vector3 _carForward)
     {
         if (Physics.Raycast(transform.position, -transform.up, out tireRay, suspensionRestLength + 0.1f))
         {
             UpdateSuspension();
             UpdateAcceleration(_accelerationInput, _carForward);
+            UpdateBraking(_brakeInput, _carForward);
             UpdateSteering();
         }
 
-        accForces = suspensionForce + accelerationForce + steeringForce;
+        accForces = suspensionForce + accelerationForce + brakingForce + steeringForce;
         Debug.DrawLine(transform.position, transform.position + accForces, Color.green);
 
         suspensionForce = Vector3.zero;
         accelerationForce = Vector3.zero;
+        brakingForce = Vector3.zero;
         steeringForce = Vector3.zero;
     }
 
@@ -91,6 +95,19 @@ public class Tire : MonoBehaviour
             float powerToTire = 1.0f * _accelerationInput; //change 1.0f to a lookup curve that uses normalizedSpeed
 
             accelerationForce = accelerationDirection * powerToTire;
+        }
+    }
+
+    private void UpdateBraking(float _brakingInput, Vector3 _carForward)
+    {
+        //World space direction of braking force
+        Vector3 brakingDirection = -transform.forward;
+
+        if (_brakingInput > 0.0f)
+        {
+            float powerToTire = brakeStrength * _brakingInput; //change 1.0f to a lookup curve that uses normalizedSpeed
+
+            brakingForce = brakingDirection * powerToTire;
         }
     }
 

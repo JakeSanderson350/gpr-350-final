@@ -56,7 +56,7 @@ public class CarController : MonoBehaviour
     {
         foreach (Tire tire in frontTires)
         {
-            tire.UpdateForces(accelerationInput, transform.forward);
+            tire.UpdateForces(accelerationInput, brakeInput, transform.forward);
 
             //Debug.DrawLine(tire.transform.position, tire.transform.forward * 0.5f);
             Debug.DrawLine(tire.transform.position, tire.transform.position + (tire.transform.forward * 2.0f), Color.blue);
@@ -65,7 +65,7 @@ public class CarController : MonoBehaviour
         }
         foreach (Tire tire in backTires)
         {
-            tire.UpdateForces(accelerationInput, transform.forward);
+            tire.UpdateForces(accelerationInput, brakeInput, transform.forward);
 
             carRB.AddForce(tire.GetForces(), tire.transform.position);
         }
