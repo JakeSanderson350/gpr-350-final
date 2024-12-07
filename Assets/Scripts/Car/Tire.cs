@@ -9,7 +9,10 @@ public class Tire : MonoBehaviour
 
     private Vector3 accForces = Vector3.zero;
 
+    //Collision data
     private RaycastHit tireRay;
+    [SerializeField]
+    public Sphere sphereCollider;
 
     //suspension variables
     private Vector3 suspensionForce;
@@ -19,16 +22,20 @@ public class Tire : MonoBehaviour
 
     //Acceleration variables
     private Vector3 accelerationForce;
-    private Vector3 brakingForce;
     public float topSpeed = 100;
-    public float brakeStrength = 0.5f;
+    public float brakeStrength = 0.8f;
+    private float frictionStrength = 0.3f;
 
     //Steering variables
     private Vector3 steeringForce;
-    public float tireGripFactor = 1.0f;
+    public float tireGripFactor = 0.5f;
 
     private void Start()
     {
+        sphereCollider = FindObjectOfType<Sphere>();
+        sphereCollider.Radius = 0.2f;
+        sphereCollider.invMass = 0.1f; //mass of 10
+
         suspensionForce = Vector3.zero;
         accelerationForce = Vector3.zero;
         steeringForce = Vector3.zero;
@@ -39,17 +46,18 @@ public class Tire : MonoBehaviour
         if (Physics.Raycast(transform.position, -transform.up, out tireRay, suspensionRestLength + 0.1f))
         {
             UpdateSuspension();
-            UpdateAcceleration(_accelerationInput, _carForward);
-            UpdateBraking(_brakeInput, _carForward);
+            UpdateAcceleration(_accelerationInput, _brakeInput, _carForward);
+            //UpdateBraking(_brakeInput, _carForward);
             UpdateSteering();
         }
 
-        accForces = suspensionForce + accelerationForce + brakingForce + steeringForce;
-        Debug.DrawLine(transform.position, transform.position + accForces, Color.green);
+        accForces = suspensionForce + accelerationForce + steeringForce;
+        Debug.DrawLine(transform.position, transform.position + suspensionForce, Color.green);
+        Debug.DrawLine(transform.position, transform.position + accelerationForce, Color.blue);
+        Debug.DrawLine(transform.position, transform.position + steeringForce, Color.red);
 
         suspensionForce = Vector3.zero;
         accelerationForce = Vector3.zero;
-        brakingForce = Vector3.zero;
         steeringForce = Vector3.zero;
     }
 
@@ -80,15 +88,17 @@ public class Tire : MonoBehaviour
         }
     }
 
-    private void UpdateAcceleration(float _accelerationInput, Vector3 _carForward)
+    private void UpdateAcceleration(float _accelerationInput, float _brakingInput, Vector3 _carForward)
     {
         //World space direction of acceleration force
         Vector3 accelerationDirection = transform.forward;
 
+        //Projects linear velocity on forward vector to get speed of car
+        float carSpeed = Vector3.Dot(_carForward, carRB.COM.velocity);
+
+        //Acceleration force
         if (_accelerationInput > 0.0f)
         {
-            float carSpeed = Vector3.Dot(_carForward, carRB.COM.velocity);
-
             //Speed as float 0-1 based on how close to top speed
             float normalizedSpeed = Mathf.Clamp01(Mathf.Abs(carSpeed) / topSpeed);
 
@@ -96,34 +106,28 @@ public class Tire : MonoBehaviour
 
             accelerationForce = accelerationDirection * powerToTire;
         }
-    }
 
-    private void UpdateBraking(float _brakingInput, Vector3 _carForward)
-    {
-        //World space direction of braking force
-        Vector3 brakingDirection = -transform.forward;
-
-        if (_brakingInput > 0.0f)
+        //Rolling friction force
+        else if (carSpeed < 0.1f && carSpeed > -0.1f) //Prevents oscilatting friction forces when speed is very low
         {
-            float powerToTire = brakeStrength * _brakingInput; //change 1.0f to a lookup curve that uses normalizedSpeed
-
-            brakingForce = brakingDirection * powerToTire;
+            accelerationForce = Vector3.zero;
+        }
+        else if (carSpeed > 0.1f)
+        {
+            accelerationForce = -accelerationDirection * frictionStrength;
+        }
+        else if (carSpeed < -0.1f)
+        {
+            accelerationForce = accelerationDirection * frictionStrength;
         }
 
-        //if (_brakingInput > 0.0f)
-        //{
-        //    Vector3 brakingDirection = transform.forward;
+        //Braking force
+        if (_brakingInput > 0.0f)
+        {
+            float powerToTire = brakeStrength * _brakingInput;
 
-        //    Vector3 tireWorldVelocity = carRB.GetVelocityAtPoint(transform.position);
-
-        //    //Tires velocity in the braking direction
-        //    float brakingVelocity = Vector3.Dot(brakingDirection, tireWorldVelocity);
-
-        //    //Apply grip factor and negate to get the correct force to apply
-        //    float deltaVelocity = -brakingVelocity * brakeStrength;
-
-        //    brakingForce = brakingDirection * deltaVelocity;
-        //}
+            accelerationForce = -accelerationDirection * powerToTire;
+        }
     }
 
     private void UpdateSteering() //UpdateSteering, needs tire transform, tireGripFactor 1 max grip 0 no grip

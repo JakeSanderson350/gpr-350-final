@@ -117,6 +117,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4881702520627991880}
   - component: {fileID: 3804519124584734587}
+  - component: {fileID: 6652055794208068119}
   m_Layer: 0
   m_Name: BackRight Tire
   m_TagString: Untagged
@@ -153,11 +154,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carRB: {fileID: 4774868611609536168}
+  sphereCollider: {fileID: 6652055794208068119}
   suspensionRestLength: 0.5
   suspensionStrength: 10
   suspensionDamping: 20
   topSpeed: 100
+  brakeStrength: 0.8
   tireGripFactor: 1
+--- !u!114 &6652055794208068119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 618367291596360495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfa3acaeeed78482ba1fa1faa317ec0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Radius: 0.2
 --- !u!1 &920731762892870112
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,6 +184,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5279165922973478711}
   - component: {fileID: 6408582197048257338}
+  - component: {fileID: 4465303650894390858}
   m_Layer: 0
   m_Name: FrontLeft Tire
   m_TagString: Untagged
@@ -204,11 +221,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carRB: {fileID: 4774868611609536168}
+  sphereCollider: {fileID: 4465303650894390858}
   suspensionRestLength: 0.5
   suspensionStrength: 10
   suspensionDamping: 20
   topSpeed: 100
+  brakeStrength: 0.8
   tireGripFactor: 1
+--- !u!114 &4465303650894390858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920731762892870112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfa3acaeeed78482ba1fa1faa317ec0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Radius: 0.2
 --- !u!1 &2574518763555136987
 GameObject:
   m_ObjectHideFlags: 0
@@ -219,6 +251,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1530873485500625801}
   - component: {fileID: 2718872489105381472}
+  - component: {fileID: 8712719692789253531}
   m_Layer: 0
   m_Name: BackLeft Tire
   m_TagString: Untagged
@@ -255,11 +288,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carRB: {fileID: 4774868611609536168}
+  sphereCollider: {fileID: 8712719692789253531}
   suspensionRestLength: 0.5
   suspensionStrength: 10
   suspensionDamping: 20
   topSpeed: 100
+  brakeStrength: 0.8
   tireGripFactor: 1
+--- !u!114 &8712719692789253531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2574518763555136987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfa3acaeeed78482ba1fa1faa317ec0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Radius: 0.2
 --- !u!1 &2741675035392201033
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,6 +572,7 @@ GameObject:
   m_Component:
   - component: {fileID: 989810959591177127}
   - component: {fileID: 2545448595856887775}
+  - component: {fileID: 5766509534369582558}
   m_Layer: 0
   m_Name: FrontRight Tire
   m_TagString: Untagged
@@ -560,11 +609,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carRB: {fileID: 4774868611609536168}
+  sphereCollider: {fileID: 5766509534369582558}
   suspensionRestLength: 0.5
   suspensionStrength: 10
   suspensionDamping: 20
   topSpeed: 100
+  brakeStrength: 0.8
   tireGripFactor: 1
+--- !u!114 &5766509534369582558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5926874675111626101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfa3acaeeed78482ba1fa1faa317ec0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Radius: 0.2
 --- !u!1 &6603376620628969142
 GameObject:
   m_ObjectHideFlags: 0
