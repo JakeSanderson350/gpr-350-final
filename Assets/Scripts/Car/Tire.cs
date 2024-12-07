@@ -109,6 +109,21 @@ public class Tire : MonoBehaviour
 
             brakingForce = brakingDirection * powerToTire;
         }
+
+        //if (_brakingInput > 0.0f)
+        //{
+        //    Vector3 brakingDirection = transform.forward;
+
+        //    Vector3 tireWorldVelocity = carRB.GetVelocityAtPoint(transform.position);
+
+        //    //Tires velocity in the braking direction
+        //    float brakingVelocity = Vector3.Dot(brakingDirection, tireWorldVelocity);
+
+        //    //Apply grip factor and negate to get the correct force to apply
+        //    float deltaVelocity = -brakingVelocity * brakeStrength;
+
+        //    brakingForce = brakingDirection * deltaVelocity;
+        //}
     }
 
     private void UpdateSteering() //UpdateSteering, needs tire transform, tireGripFactor 1 max grip 0 no grip
