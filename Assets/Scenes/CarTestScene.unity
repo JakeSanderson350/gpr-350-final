@@ -355,6 +355,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &389296007 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6652055794208068119, guid: c8524b09a4e8cd94784781d7274a1ea1, type: 3}
+  m_PrefabInstance: {fileID: 4446330656394971043}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfa3acaeeed78482ba1fa1faa317ec0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &392536341
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,6 +434,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &550355279 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8712719692789253531, guid: c8524b09a4e8cd94784781d7274a1ea1, type: 3}
+  m_PrefabInstance: {fileID: 4446330656394971043}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfa3acaeeed78482ba1fa1faa317ec0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &565477542
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,6 +700,8 @@ GameObject:
   - component: {fileID: 1191148639}
   - component: {fileID: 1191148638}
   - component: {fileID: 1191148637}
+  - component: {fileID: 1191148642}
+  - component: {fileID: 1191148643}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -799,6 +823,46 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1191148642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1191148636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3f74720c7c3c4cc5b2f267c8b38e33f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1191148643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1191148636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e079d0cbd3ddd4b2db9c0945d1021c3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0, z: 0}
+  damping: 1
+  acceleration: {x: 0, y: 0, z: 0}
+  gravity: {x: 0, y: 0, z: 0}
+  inverseMass: 0
+--- !u!114 &1294218311 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5766509534369582558, guid: c8524b09a4e8cd94784781d7274a1ea1, type: 3}
+  m_PrefabInstance: {fileID: 4446330656394971043}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfa3acaeeed78482ba1fa1faa317ec0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1378715755
 GameObject:
   m_ObjectHideFlags: 0
@@ -991,6 +1055,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1595156486}
   m_CullTransparentMesh: 1
+--- !u!114 &1640979474 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4465303650894390858, guid: c8524b09a4e8cd94784781d7274a1ea1, type: 3}
+  m_PrefabInstance: {fileID: 4446330656394971043}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfa3acaeeed78482ba1fa1faa317ec0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1963072074
 GameObject:
   m_ObjectHideFlags: 0
@@ -1287,6 +1362,26 @@ PrefabInstance:
       propertyPath: tireTurnSpeed
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 7710685447569444046, guid: c8524b09a4e8cd94784781d7274a1ea1, type: 3}
+      propertyPath: tireColliders.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7710685447569444046, guid: c8524b09a4e8cd94784781d7274a1ea1, type: 3}
+      propertyPath: tireColliders.Array.data[0]
+      value: 
+      objectReference: {fileID: 1640979474}
+    - target: {fileID: 7710685447569444046, guid: c8524b09a4e8cd94784781d7274a1ea1, type: 3}
+      propertyPath: tireColliders.Array.data[1]
+      value: 
+      objectReference: {fileID: 1294218311}
+    - target: {fileID: 7710685447569444046, guid: c8524b09a4e8cd94784781d7274a1ea1, type: 3}
+      propertyPath: tireColliders.Array.data[2]
+      value: 
+      objectReference: {fileID: 550355279}
+    - target: {fileID: 7710685447569444046, guid: c8524b09a4e8cd94784781d7274a1ea1, type: 3}
+      propertyPath: tireColliders.Array.data[3]
+      value: 
+      objectReference: {fileID: 389296007}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

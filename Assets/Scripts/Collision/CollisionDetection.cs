@@ -169,6 +169,35 @@ public static class CollisionDetection
         return info;
     }
 
+    //Added so that separating velocity can be calculated
+    //without changing actual velocity of tire
+    public static CollisionInfo GetCollisionInfo(PhysicsCollider s1, PhysicsCollider s2, Vector3 tireVelocity)
+    {
+        CollisionInfo info = new CollisionInfo();
+        NormalAndPenCalculation calc = collisionFns[(int)s1.shape, (int)s2.shape];
+
+        try
+        {
+            calc(s1, s2, out info.normal, out info.penetration);
+        }
+        catch (NotImplementedException e)
+        {
+            Debug.Log($"Tried to test collision between {s1.shape} and {s2.shape}, but no collision detection function was found.");
+            throw e;
+        }
+
+        {
+            float sumOfInvMasses = s1.invMass + s2.invMass;
+            if (sumOfInvMasses == 0) return info; // Both masses infinite, avoid divide-by-zero error
+            info.pctToMoveS1 = s1.invMass / sumOfInvMasses;
+            info.pctToMoveS2 = s2.invMass / sumOfInvMasses;
+
+            info.separatingVelocity = Vector3.Dot(tireVelocity - s2.velocity, info.normal);
+        }
+
+        return info;
+    }
+
     public static void ApplyCollisionResolution(PhysicsCollider c1, PhysicsCollider c2)
     {
         CollisionChecks++;

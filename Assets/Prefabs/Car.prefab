@@ -118,6 +118,7 @@ GameObject:
   - component: {fileID: 4881702520627991880}
   - component: {fileID: 3804519124584734587}
   - component: {fileID: 6652055794208068119}
+  - component: {fileID: 7082841648859559035}
   m_Layer: 0
   m_Name: BackRight Tire
   m_TagString: Untagged
@@ -174,6 +175,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Radius: 0.2
+--- !u!114 &7082841648859559035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 618367291596360495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e079d0cbd3ddd4b2db9c0945d1021c3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0, z: 0}
+  damping: 1
+  acceleration: {x: 0, y: 0, z: 0}
+  gravity: {x: 0, y: 0, z: 0}
+  inverseMass: 1
 --- !u!1 &920731762892870112
 GameObject:
   m_ObjectHideFlags: 0
@@ -185,6 +203,7 @@ GameObject:
   - component: {fileID: 5279165922973478711}
   - component: {fileID: 6408582197048257338}
   - component: {fileID: 4465303650894390858}
+  - component: {fileID: 5079856937751855369}
   m_Layer: 0
   m_Name: FrontLeft Tire
   m_TagString: Untagged
@@ -241,6 +260,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Radius: 0.2
+--- !u!114 &5079856937751855369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920731762892870112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e079d0cbd3ddd4b2db9c0945d1021c3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0, z: 0}
+  damping: 1
+  acceleration: {x: 0, y: 0, z: 0}
+  gravity: {x: 0, y: 0, z: 0}
+  inverseMass: 1
 --- !u!1 &2574518763555136987
 GameObject:
   m_ObjectHideFlags: 0
@@ -252,6 +288,7 @@ GameObject:
   - component: {fileID: 1530873485500625801}
   - component: {fileID: 2718872489105381472}
   - component: {fileID: 8712719692789253531}
+  - component: {fileID: 4182700673904382816}
   m_Layer: 0
   m_Name: BackLeft Tire
   m_TagString: Untagged
@@ -308,6 +345,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Radius: 0.2
+--- !u!114 &4182700673904382816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2574518763555136987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e079d0cbd3ddd4b2db9c0945d1021c3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0, z: 0}
+  damping: 1
+  acceleration: {x: 0, y: 0, z: 0}
+  gravity: {x: 0, y: 0, z: 0}
+  inverseMass: 1
 --- !u!1 &2741675035392201033
 GameObject:
   m_ObjectHideFlags: 0
@@ -561,6 +615,7 @@ MonoBehaviour:
   backTires:
   - {fileID: 2718872489105381472}
   - {fileID: 3804519124584734587}
+  tireColliders: []
   tireTurnSpeed: 1
 --- !u!1 &5926874675111626101
 GameObject:
@@ -573,6 +628,7 @@ GameObject:
   - component: {fileID: 989810959591177127}
   - component: {fileID: 2545448595856887775}
   - component: {fileID: 5766509534369582558}
+  - component: {fileID: 628744183065141841}
   m_Layer: 0
   m_Name: FrontRight Tire
   m_TagString: Untagged
@@ -629,6 +685,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Radius: 0.2
+--- !u!114 &628744183065141841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5926874675111626101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e079d0cbd3ddd4b2db9c0945d1021c3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0, z: 0}
+  damping: 1
+  acceleration: {x: 0, y: 0, z: 0}
+  gravity: {x: 0, y: 0, z: 0}
+  inverseMass: 1
 --- !u!1 &6603376620628969142
 GameObject:
   m_ObjectHideFlags: 0

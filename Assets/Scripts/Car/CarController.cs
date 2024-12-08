@@ -10,9 +10,10 @@ public class CarController : MonoBehaviour
 
     [SerializeField]
     private List<Tire> frontTires, backTires;
+    [SerializeField]
+    private List<Sphere> tireColliders;
     public float tireTurnSpeed = 1;
     private float tireAngle = 0.0f;
-    private List<Sphere> tireColliders;
 
     private float accelerationInput;
     private float brakeInput;
@@ -20,18 +21,9 @@ public class CarController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Invoke("LoadColliders", 0.25f);
-    }
-
-    private void LoadColliders()
-    {
-        foreach (Tire tire in frontTires)
+        for (int i = 0; i < tireColliders.Count; i++)
         {
-            tireColliders.Add(tire.sphereCollider);
-        }
-        foreach (Tire tire in backTires)
-        {
-            tireColliders.Add(tire.sphereCollider);
+            tireColliders[i].invMass = 0.1f;
         }
     }
 
@@ -94,14 +86,20 @@ public class CarController : MonoBehaviour
         {
             foreach (PlaneCollider plane in planes)
             {
-                //Get restitution velocity of tire
-                CollisionInfo info = GetCollisionInfo(tire, plane);
-                VectorDeltas deltaVelelocity = ResolveVelocity(info);
-                Vector3 tireDeltaVelocity = deltaVelelocity.s1;
+                Vector3 tireVelocity = carRB.GetVelocityAtPoint(tire.transform.position);
+
+                CollisionInfo info = GetCollisionInfo(tire, plane, tireVelocity);
 
                 //Apply force to rigidbody
-                Vector3 collisionForce = (1 / tire.invMass) * tireDeltaVelocity; //F = mv
-                carRB.AddForce(collisionForce, tire.transform.position);
+                if (info.IsColliding)
+                {
+                    //Get restitution velocity of tire
+                    VectorDeltas deltaVelelocity = ResolveVelocity(info);
+                    Vector3 tireDeltaVelocity = deltaVelelocity.s1;
+
+                    Vector3 collisionForce = (1 / tire.invMass) * (tireVelocity + tireDeltaVelocity); //F = mv
+                    carRB.AddForce(collisionForce, tire.transform.position);
+                }
             }
         }
     }
