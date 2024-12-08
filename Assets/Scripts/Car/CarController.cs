@@ -61,7 +61,7 @@ public class CarController : MonoBehaviour
     private void FixedUpdate()
     {
         //Check collision
-        CollisionResolution();
+        //CollisionResolution();
 
         //Update tire forces
         foreach (Tire tire in frontTires)
