@@ -14,7 +14,7 @@ public class RBController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<RectRigidBody>();
-        dimensions = rb.dimensions;
+        dimensions = rb.getDimensions();
         halfLengths = dimensions / 2;
     }
 

@@ -10,7 +10,8 @@ public class RectRigidBody : MonoBehaviour
     //Constants
     public float mass = 1.0f;
     private float invMass;
-    public Vector3 dimensions;
+    [SerializeField]
+    private Vector3 dimensions;
     public Vector3 gravity = Vector3.zero;
     private Matrix3x3 inertiaTensor;
     private Matrix3x3 inverseTensor;
@@ -36,9 +37,8 @@ public class RectRigidBody : MonoBehaviour
 
         angularMomentum = Vector3.zero;
 
-        dimensions = transform.lossyScale;
+        //dimensions = transform.lossyScale;
         Debug.Log(dimensions);
-        //dimensions = Vector3.one;
         invMass = 1.0f / mass;
         COM.inverseMass = invMass;
 
@@ -90,6 +90,8 @@ public class RectRigidBody : MonoBehaviour
         //Update OBB
         rbOBB.transform.position = transform.position;
         rbOBB.transform.rotation = rotation.Quaternion();
+
+        //Debug.DrawLine(transform.position, transform.position + (dimensions / 2), Color.magenta);
     }
 
     private void UpdateRotation(float deltaTime)
@@ -136,5 +138,10 @@ public class RectRigidBody : MonoBehaviour
 
         //Add linear and rotational velocities
         return COM.velocity + rotationVelocity;
+    }
+
+    public Vector3 getDimensions()
+    {
+        return dimensions;
     }
 }
