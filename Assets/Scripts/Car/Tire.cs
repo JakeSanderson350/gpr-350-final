@@ -65,13 +65,12 @@ public class Tire : MonoBehaviour
         return accForces;
     }
 
-    private void UpdateSuspension() //UpdateSuspension, needs tire transform, springStrength, springRestDistance
+    private void UpdateSuspension()
     {
         //World space direction of suspension force
         Vector3 suspensionDirection = transform.up;
 
-        //Vector3 tireWorldVelocity = carRB.GetVelocityAtPoint(transform.position);
-        Vector3 tireWorldVelocity = carRB.COM.velocity; //Only works with linear velocity no angular?
+        Vector3 tireWorldVelocity = carRB.COM.velocity;
 
         //Offset of spring length and distance to floor
         float offset = suspensionRestLength - tireRay.distance;
@@ -129,7 +128,7 @@ public class Tire : MonoBehaviour
         }
     }
 
-    private void UpdateSteering() //UpdateSteering, needs tire transform, tireGripFactor 1 max grip 0 no grip
+    private void UpdateSteering()
     {
         //World space direction of steering force
         Vector3 steeringDirection = transform.right;

@@ -17,7 +17,7 @@ public class RectRigidBody : MonoBehaviour
     private Matrix3x3 inverseTensor;
 
     //State variables
-    public RBCenterOfMass COM; //Center of mass. Stores linear momentum
+    public RBCenterOfMass COM; //Center of mass. Stores linear momentum and position
     public Vector3 angularMomentum;
     private Vector3 angularVelocity;
     public float angularDamping = 1.0f;
@@ -59,7 +59,6 @@ public class RectRigidBody : MonoBehaviour
     {
         //Make diagonal matrix of inertia values for each axis
         Matrix3x3 tensor = Matrix3x3.Identity();
-        float volume = _dimensions.x * _dimensions.y * _dimensions.z;
 
         tensor[0, 0] = mass * (_dimensions.y * _dimensions.y + _dimensions.z * _dimensions.z) / 12.0f;
         tensor[1, 1] = mass * (_dimensions.x * _dimensions.x + _dimensions.z * _dimensions.z) / 12.0f;
@@ -90,8 +89,6 @@ public class RectRigidBody : MonoBehaviour
         //Update OBB
         rbOBB.transform.position = transform.position;
         rbOBB.transform.rotation = rotation.Quaternion();
-
-        //Debug.DrawLine(transform.position, transform.position + (dimensions / 2), Color.magenta);
     }
 
     private void UpdateRotation(float deltaTime)
@@ -120,7 +117,6 @@ public class RectRigidBody : MonoBehaviour
         accForces += _newForce;
 
         // Calculate torque produced by the force applied at the application point
-        //TODO check if in bounds of rigidbody
         Vector3 pointRelativeToCenter = _applicationPoint - COM.transform.position;
         Vector3 newTorque = Vector3.Cross(_newForce, pointRelativeToCenter);
         torque += newTorque;

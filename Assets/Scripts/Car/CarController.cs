@@ -87,6 +87,7 @@ public class CarController : MonoBehaviour
             foreach (PlaneCollider plane in planes)
             {
                 Vector3 tireVelocity = carRB.GetVelocityAtPoint(tire.transform.position);
+                tireVelocity = new Vector3(0.0f, tireVelocity.y, 0.0f);
 
                 CollisionInfo info = GetCollisionInfo(tire, plane, tireVelocity);
 
@@ -97,8 +98,9 @@ public class CarController : MonoBehaviour
                     VectorDeltas deltaVelelocity = ResolveVelocity(info);
                     Vector3 tireDeltaVelocity = deltaVelelocity.s1;
 
-                    Vector3 collisionForce = (1 / tire.invMass) * (tireVelocity + tireDeltaVelocity); //F = mv
+                    Vector3 collisionForce = (1 / tire.invMass) * (/*tireVelocity +*/ tireDeltaVelocity); //F = mv
                     carRB.AddForce(collisionForce, tire.transform.position);
+                    Debug.DrawLine(tire.transform.position, tire.transform.position + collisionForce, Color.magenta);
                 }
             }
         }
