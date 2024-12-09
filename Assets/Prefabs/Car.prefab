@@ -534,8 +534,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15b18ea892abe6c44874c0b797dfb1d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 100
-  dimensions: {x: 6, y: 1, z: 5.1}
+  mass: 175
+  dimensions: {x: 4, y: 1, z: 5.1}
   gravity: {x: 0, y: -5, z: 0}
   COM: {fileID: 2687261082805768462}
   angularMomentum: {x: 0, y: 0, z: 0}
