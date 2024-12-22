@@ -15,7 +15,7 @@ public class OBB : PhysicsCollider
     }
     Vector3 toLocal(Vector3 _worldPoint)
     {
-        return transform.worldToLocalMatrix * _worldPoint;
+        return transform.InverseTransformPoint(_worldPoint);
     }
 
     public void setHalfWidth(Vector3 _halfWidth)
@@ -25,13 +25,13 @@ public class OBB : PhysicsCollider
 
     public void setAxes(Matrix3x3 _axes)
     {
-        //axes[0] = new Vector3(_axes.values[0, 0], _axes.values[0, 1], _axes.values[0, 2]).normalized;
-        //axes[1] = new Vector3(_axes.values[1, 0], _axes.values[1, 1], _axes.values[1, 2]).normalized;
-        //axes[2] = new Vector3(_axes.values[2, 0], _axes.values[2, 1], _axes.values[2, 2]).normalized;
-
         axes[0] = new Vector3(_axes.values[0, 0], _axes.values[1, 0], _axes.values[2, 0]).normalized;
         axes[1] = new Vector3(_axes.values[0, 1], _axes.values[1, 1], _axes.values[2, 1]).normalized;
         axes[2] = new Vector3(_axes.values[0, 2], _axes.values[1, 2], _axes.values[2, 2]).normalized;
+
+        Debug.DrawLine(transform.position, transform.position + axes[0], Color.red);
+        Debug.DrawLine(transform.position, transform.position + axes[1], Color.green);
+        Debug.DrawLine(transform.position, transform.position + axes[2], Color.blue);
     }
 
     public void getClosestPoint (Vector3 _worldPoint, out Vector3 closestPoint)
@@ -55,25 +55,26 @@ public class OBB : PhysicsCollider
     {
         Vector3[] vertices = new Vector3[8];
 
-        //Get local positions based on orientation
-        center = Vector3.zero;
+        // Pre-calculate all possible combinations of extents
+        Vector3[] directions = new Vector3[8];
+        directions[0] = new Vector3(halfWidth.x, halfWidth.y, halfWidth.z);
+        directions[1] = new Vector3(halfWidth.x, halfWidth.y, -halfWidth.z);
+        directions[2] = new Vector3(halfWidth.x, -halfWidth.y, halfWidth.z);
+        directions[3] = new Vector3(halfWidth.x, -halfWidth.y, -halfWidth.z);
+        directions[4] = new Vector3(-halfWidth.x, halfWidth.y, halfWidth.z);
+        directions[5] = new Vector3(-halfWidth.x, halfWidth.y, -halfWidth.z);
+        directions[6] = new Vector3(-halfWidth.x, -halfWidth.y, halfWidth.z);
+        directions[7] = new Vector3(-halfWidth.x, -halfWidth.y, -halfWidth.z);
 
-        Vector3[] localVertices = new Vector3[8];
-        localVertices[0] = center + (axes[0] * halfWidth.x) + (axes[1] * halfWidth.y) + (axes[2] * halfWidth.z);
-        localVertices[1] = center + (axes[0] * halfWidth.x) + (axes[1] * halfWidth.y) - (axes[2] * halfWidth.z);
-        localVertices[2] = center + (axes[0] * halfWidth.x) - (axes[1] * halfWidth.y) + (axes[2] * halfWidth.z);
-        localVertices[3] = center + (axes[0] * halfWidth.x) - (axes[1] * halfWidth.y) - (axes[2] * halfWidth.z);
-        localVertices[4] = center - (axes[0] * halfWidth.x) + (axes[1] * halfWidth.y) + (axes[2] * halfWidth.z);
-        localVertices[5] = center - (axes[0] * halfWidth.x) + (axes[1] * halfWidth.y) - (axes[2] * halfWidth.z);
-        localVertices[6] = center - (axes[0] * halfWidth.x) - (axes[1] * halfWidth.y) + (axes[2] * halfWidth.z);
-        localVertices[7] = center - (axes[0] * halfWidth.x) - (axes[1] * halfWidth.y) - (axes[2] * halfWidth.z);
-
-        //Convert local vertices to world
-        for (int i = 0; i < vertices.Length; i++)
+        for (int i = 0; i < 8; i++)
         {
-            vertices[i] = toWorld(localVertices[i]);
+            // Apply axes to each direction vector
+            Vector3 rotatedDir = (axes[0] * directions[i].x) + (axes[1] * directions[i].y) + (axes[2] * directions[i].z);
 
-            Debug.DrawLine(transform.position, vertices[i], Color.white);
+            // Convert to world space by adding the position
+            vertices[i] = transform.position + rotatedDir;
+
+            //Debug.DrawLine(transform.position, vertices[i], Color.white);
         }
 
         return vertices;

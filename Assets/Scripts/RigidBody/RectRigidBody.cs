@@ -53,7 +53,7 @@ public class RectRigidBody : MonoBehaviour
         torque = Vector3.zero;
 
         rbOBB = gameObject.AddComponent<OBB>();
-        rbOBB.setHalfWidth(dimensions / 2.0f);
+        rbOBB.setHalfWidth((dimensions / 2.0f));
     }
 
     private Matrix3x3 calcInertiaTensor(Vector3 _dimensions)
