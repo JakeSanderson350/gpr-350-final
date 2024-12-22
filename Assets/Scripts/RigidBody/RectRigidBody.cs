@@ -53,6 +53,7 @@ public class RectRigidBody : MonoBehaviour
         torque = Vector3.zero;
 
         rbOBB = gameObject.AddComponent<OBB>();
+        rbOBB.setHalfWidth(dimensions / 2.0f);
     }
 
     private Matrix3x3 calcInertiaTensor(Vector3 _dimensions)
@@ -87,8 +88,7 @@ public class RectRigidBody : MonoBehaviour
         torque = Vector3.zero;
 
         //Update OBB
-        rbOBB.transform.position = transform.position;
-        rbOBB.transform.rotation = rotation.Quaternion();
+        updateOBB();
     }
 
     private void UpdateRotation(float deltaTime)
@@ -110,6 +110,15 @@ public class RectRigidBody : MonoBehaviour
         //Get new rotation matrix based off of normalized rotation quaternion to avoid
         //accumulated floating point errors that break the rotation matrix
         rotation = Matrix3x3.QuaternionToMatrix(transform.rotation.normalized);
+    }
+
+    private void updateOBB()
+    {
+        rbOBB.transform.position = transform.position;
+        rbOBB.transform.rotation = rotation.Quaternion();
+
+        rbOBB.setAxes(rotation);
+        rbOBB.getVertices();
     }
 
     public void AddForce(Vector3 _newForce, Vector3 _applicationPoint)
