@@ -26,10 +26,27 @@ public class CollisionManager : MonoBehaviour
         }
     }
 
+    private void CheckOBBCollision()
+    {
+        OBB[] oBBs = FindObjectsOfType<OBB>();
+        for (int i = 0; i < oBBs.Length; i++)
+        {
+            OBB b1 = oBBs[i];
+            for (int j = i + 1; j < oBBs.Length; j++)
+            {
+                OBB b2 = oBBs[j];
+                if (OBB.SATintersect(b1, b2))
+                {
+                    Debug.Log("Colliding");
+                }
+            }
+        }
+    }
+
     private void FixedUpdate()
     {
         CollisionChecks = 0;
 
-        StandardCollisionResolution();
+        CheckOBBCollision();
     }
 }

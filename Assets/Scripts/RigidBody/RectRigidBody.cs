@@ -118,7 +118,6 @@ public class RectRigidBody : MonoBehaviour
         rbOBB.transform.rotation = rotation.Quaternion();
 
         rbOBB.setAxes(rotation);
-        rbOBB.getVertices();
     }
 
     public void AddForce(Vector3 _newForce, Vector3 _applicationPoint)

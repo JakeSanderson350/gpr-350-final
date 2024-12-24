@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Animations;
 
 public class OBB : PhysicsCollider
 {
@@ -32,6 +33,11 @@ public class OBB : PhysicsCollider
         Debug.DrawLine(transform.position, transform.position + axes[0], Color.red);
         Debug.DrawLine(transform.position, transform.position + axes[1], Color.green);
         Debug.DrawLine(transform.position, transform.position + axes[2], Color.blue);
+    }
+
+    public Vector3[] getAxes()
+    {
+        return axes;
     }
 
     public void getClosestPoint (Vector3 _worldPoint, out Vector3 closestPoint)
@@ -78,6 +84,49 @@ public class OBB : PhysicsCollider
         }
 
         return vertices;
+    }
+
+    //SAT functions
+    public static bool SATintersect(OBB b1, OBB b2)
+    {
+        Vector3[] axesToTest = b1.getAxes();
+        for (int i = 0; i < axesToTest.Length; i++)
+        {
+            if (!overlapOnAxis(b1, b2, axesToTest[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool overlapOnAxis(OBB b1, OBB b2, Vector3 _axis)
+    {
+        Vector2 interval1 = getInterval(b1, _axis);
+        Vector2 interval2 = getInterval(b2, _axis);
+
+        return (interval2.x <= interval1.y) && (interval1.x <= interval2.y);
+    }
+
+    private static Vector2 getInterval(OBB _rect, Vector3 _axis)
+    {
+        Vector2 result = Vector2.zero;
+
+        Vector3[] vertices = _rect.getVertices();
+
+        result.x = Vector3.Dot(_axis, vertices[0]);
+        result.y = result.x;
+        //Loop through vertices and find lowest point on axis and highest point on axis
+        foreach (Vector3 v in vertices)
+        {
+            float projection = Vector3.Dot(_axis, v);
+
+            result.x = Mathf.Min(result.x, projection);
+            result.y = Mathf.Max(result.y, projection);
+        }
+
+        return result;
     }
 
     public override Shape shape => Shape.OBB;

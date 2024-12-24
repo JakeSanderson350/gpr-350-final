@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RBController : MonoBehaviour
+public class RBForceController : MonoBehaviour
 {
     private RectRigidBody rb;
 
@@ -10,7 +10,6 @@ public class RBController : MonoBehaviour
     private Vector3 halfLengths;
 
     private Vector3 applicationPos;
-    bool firstTime = true;
 
     void Start()
     {
@@ -51,13 +50,6 @@ public class RBController : MonoBehaviour
             applicationPos = new Vector3(-halfLengths.x, -halfLengths.y, -halfLengths.z);
             rb.AddForce(new Vector3(0, 10, 0), transform.position + applicationPos);
             Debug.DrawLine(transform.position + new Vector3(-halfLengths.x, -halfLengths.y - 0.25f, -halfLengths.z), transform.position + applicationPos, Color.green, 3.0f);
-        }
-        if(firstTime)
-        {
-            applicationPos = new Vector3(-halfLengths.x, halfLengths.y, -halfLengths.z);
-            rb.AddForce(new Vector3(10, 0, 0), transform.position + applicationPos);
-            Debug.DrawLine(transform.position + new Vector3(-halfLengths.x - 0.25f, halfLengths.y, -halfLengths.z), transform.position + applicationPos, Color.green, 3.0f);
-            firstTime = false;
         }
     }
 }
