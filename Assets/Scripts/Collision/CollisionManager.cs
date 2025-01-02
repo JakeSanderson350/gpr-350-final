@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 public class CollisionManager : MonoBehaviour
 {
+    public TextMesh text;
 
     private void StandardCollisionResolution()
     {
@@ -38,6 +39,11 @@ public class CollisionManager : MonoBehaviour
                 if (OBB.SATintersect(b1, b2))
                 {
                     Debug.Log("Colliding");
+                    text.text = "Colliding: True";
+                }
+                else
+                {
+                    text.text = "Colliding: False";
                 }
             }
         }

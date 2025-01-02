@@ -98,6 +98,15 @@ public class OBB : PhysicsCollider
             }
         }
 
+        axesToTest = b2.getAxes();
+        for (int i = 0; i < axesToTest.Length; i++)
+        {
+            if (!overlapOnAxis(b1, b2, axesToTest[i]))
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 
