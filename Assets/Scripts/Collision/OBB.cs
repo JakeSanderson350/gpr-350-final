@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Animations;
+using UnityEngine.UIElements;
 
 public class OBB : PhysicsCollider
 {
@@ -30,14 +31,27 @@ public class OBB : PhysicsCollider
         axes[1] = new Vector3(_axes.values[0, 1], _axes.values[1, 1], _axes.values[2, 1]).normalized;
         axes[2] = new Vector3(_axes.values[0, 2], _axes.values[1, 2], _axes.values[2, 2]).normalized;
 
-        Debug.DrawLine(transform.position, transform.position + axes[0], Color.red);
-        Debug.DrawLine(transform.position, transform.position + axes[1], Color.green);
-        Debug.DrawLine(transform.position, transform.position + axes[2], Color.blue);
+        //Debug.DrawLine(transform.position, transform.position + axes[0], Color.red);
+        //Debug.DrawLine(transform.position, transform.position + axes[1], Color.green);
+        //Debug.DrawLine(transform.position, transform.position + axes[2], Color.blue);
     }
 
     public Vector3[] getAxes()
     {
         return axes;
+    }
+
+    public Vector3 getAxis(int _index) 
+    {
+        if (_index < axes.Length || _index >= 0)
+        {
+            return axes[_index];
+        }
+        else
+        {
+            Debug.Log("Index out of Bounds");
+            return Vector3.zero;
+        }
     }
 
     public void getClosestPoint (Vector3 _worldPoint, out Vector3 closestPoint)
@@ -136,6 +150,63 @@ public class OBB : PhysicsCollider
         }
 
         return result;
+    }
+
+    //Collision resolution functions
+    private static float transformToAxis(OBB _rect, Vector3 _axis)
+    {
+        return _rect.halfWidth.x * Mathf.Abs(Vector3.Dot(_axis, _rect.getAxis(0))) +
+               _rect.halfWidth.y * Mathf.Abs(Vector3.Dot(_axis, _rect.getAxis(1))) +
+               _rect.halfWidth.z * Mathf.Abs(Vector3.Dot(_axis, _rect.getAxis(2)));
+    }
+
+    private static float penetrationOnAxis(OBB b1, OBB b2, Vector3 _axis, Vector3 _centers)
+    {
+        //Project half lengths onto axis
+        float b1Projection = transformToAxis(b1, _axis);
+        float b2Projection = transformToAxis(b2, _axis);
+
+        //Project difference of centers onto axis
+        float distance = Mathf.Abs(Vector3.Dot(_centers, _axis));
+
+        //Return overlap, positive = penetration, negative = separation
+        return b1Projection + b2Projection - distance;
+    }
+
+    public static bool tryAxis(OBB b1, OBB b2, Vector3 _axis, Vector3 _centers, int _index, ref float minPenetration, ref int minIndex)
+    {
+        float penetration = penetrationOnAxis(b1, b2, _axis, _centers);
+
+        if (penetration < 0)
+        {
+            return false;
+        }
+        if (penetration < minPenetration)
+        {
+            minPenetration = penetration;
+            minIndex = _index;
+        }
+        return true;
+    }
+
+    //Called when vertex from box2 is in a face of box1
+    public static void vertexFaceCollision(OBB b1, OBB b2, Vector3 _centers, int _minIndex, float _penetration, out Vector3 normal, out Vector3 contactPoint)
+    {
+        //Pick one of two faces on axis of box1 that is in the direction of box2
+        normal = b1.getAxis(_minIndex);
+        if (Vector3.Dot(b1.getAxis(_minIndex), _centers) > 0)
+        {
+            normal *= -1.0f;
+        }
+
+        //Find vertex of box2 that is colliding with box1
+        Vector3 localVertex = b2.halfWidth;
+        if (Vector3.Dot(b2.getAxis(0), normal) < 0) localVertex.x = -localVertex.x;
+        if (Vector3.Dot(b2.getAxis(1), normal) < 0) localVertex.y = -localVertex.y;
+        if (Vector3.Dot(b2.getAxis(2), normal) < 0) localVertex.z = -localVertex.z;
+
+        //Convert to world coordinates
+        contactPoint = b2.toWorld(localVertex);
     }
 
     public override Shape shape => Shape.OBB;

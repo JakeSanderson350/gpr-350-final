@@ -38,8 +38,9 @@ public class CollisionManager : MonoBehaviour
                 OBB b2 = oBBs[j];
                 if (OBB.SATintersect(b1, b2))
                 {
-                    Debug.Log("Colliding");
+                    //Debug.Log("Colliding");
                     text.text = "Colliding: True";
+                    TestOBBOBB(b1, b2);
                 }
                 else
                 {

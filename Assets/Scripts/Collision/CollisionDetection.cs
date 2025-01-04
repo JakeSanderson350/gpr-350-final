@@ -239,4 +239,74 @@ public static class CollisionDetection
             s2 = deltaVelocity * info.pctToMoveS2 * -info.normal
         };
     }
+
+    //OBB Collision stuff
+    public static void TestOBBOBB(PhysicsCollider s1, PhysicsCollider s2/*, out Vector3 normal, out Vector3 contactPoint, out float penetration*/)
+    {
+        OBB b1 = s1 as OBB;
+        OBB b2 = s2 as OBB;
+
+        //Vector between centers of boxes
+        Vector3 centers = s2.position - s1.position;
+
+        float minPenetration = float.MaxValue;
+        int minIndex = 0;
+
+        //List of axes to test
+        Vector3[] axesToTest = new Vector3[15];
+
+        //Axes of b1
+        axesToTest[0] = b1.getAxis(0);
+        axesToTest[1] = b1.getAxis(1);
+        axesToTest[2] = b1.getAxis(2);
+
+        //Axes of b2
+        axesToTest[3] = b2.getAxis(0);
+        axesToTest[4] = b2.getAxis(1);
+        axesToTest[5] = b2.getAxis(2);
+
+        //Edges of both boxes
+        axesToTest[6] = Vector3.Cross(b1.getAxis(0), b2.getAxis(0));
+        axesToTest[7] = Vector3.Cross(b1.getAxis(0), b2.getAxis(1));
+        axesToTest[8] = Vector3.Cross(b1.getAxis(0), b2.getAxis(2));
+        axesToTest[9] = Vector3.Cross(b1.getAxis(1), b2.getAxis(0));
+        axesToTest[10] = Vector3.Cross(b1.getAxis(1), b2.getAxis(1));
+        axesToTest[11] = Vector3.Cross(b1.getAxis(1), b2.getAxis(2));
+        axesToTest[12] = Vector3.Cross(b1.getAxis(2), b2.getAxis(0));
+        axesToTest[13] = Vector3.Cross(b1.getAxis(2), b2.getAxis(1));
+        axesToTest[14] = Vector3.Cross(b1.getAxis(2), b2.getAxis(2));
+
+        //Test all axis to find minPenetration
+        for (int i = 0; i < axesToTest.Length; i++)
+        {
+            OBB.tryAxis(b1, b2, axesToTest[i], centers, i, ref minPenetration, ref minIndex);
+        }
+
+        Debug.Log("Least axis: " + minIndex + " Penetration: " + minPenetration);
+        //Debug.DrawLine(b1.position, b1.position + axesToTest[minIndex], Color.blue);
+
+        //Find collision data
+        Vector3 tmpNormal = Vector3.zero;
+        Vector3 tmpContactPoint = Vector3.zero;
+
+        //Vertex of box2 in a face of box1
+        if (minIndex < 3)
+        {
+            OBB.vertexFaceCollision(b1, b2, centers, minIndex, minPenetration, out tmpNormal, out tmpContactPoint);
+            Debug.DrawLine(b1.position, b1.position + tmpNormal, Color.green);
+            Debug.DrawLine(b2.position, tmpContactPoint, Color.magenta);
+        }
+        //Vertex of box1 in face of box2
+        else if (minIndex < 6)
+        {
+            //Swap b1 and b2 and centers vector
+            OBB.vertexFaceCollision(b2, b1, (centers * -1.0f), (minIndex - 3), minPenetration, out tmpNormal, out tmpContactPoint);
+            Debug.DrawLine(b2.position, b2.position + tmpNormal, Color.green);
+            Debug.DrawLine(b1.position, tmpContactPoint, Color.magenta);
+        }
+
+        //normal = tmpNormal;
+        //contactPoint = tmpContactPoint;
+        //penetration = minPenetration;
+    }
 }
