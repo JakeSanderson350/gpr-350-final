@@ -194,16 +194,17 @@ public class OBB : PhysicsCollider
     {
         //Pick one of two faces on axis of box1 that is in the direction of box2
         normal = b1.getAxis(_minIndex);
-        if (Vector3.Dot(b1.getAxis(_minIndex), _centers) > 0)
+        if (Vector3.Dot(b1.getAxis(_minIndex), _centers) < 0)
         {
             normal *= -1.0f;
         }
 
         //Find vertex of box2 that is colliding with box1
         Vector3 localVertex = b2.halfWidth;
-        if (Vector3.Dot(b2.getAxis(0), normal) < 0) localVertex.x = -localVertex.x;
-        if (Vector3.Dot(b2.getAxis(1), normal) < 0) localVertex.y = -localVertex.y;
-        if (Vector3.Dot(b2.getAxis(2), normal) < 0) localVertex.z = -localVertex.z;
+        if (Vector3.Dot(b2.getAxis(0), normal) > 0) localVertex.x = -localVertex.x;
+        if (Vector3.Dot(b2.getAxis(1), normal) > 0) localVertex.y = -localVertex.y;
+        if (Vector3.Dot(b2.getAxis(2), normal) > 0) localVertex.z = -localVertex.z;
+        localVertex = localVertex.normalized * (b2.halfWidth.magnitude / 2.0f);
 
         //Convert to world coordinates
         contactPoint = b2.toWorld(localVertex);
