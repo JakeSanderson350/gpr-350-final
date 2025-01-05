@@ -251,6 +251,7 @@ public static class CollisionDetection
 
         float minPenetration = float.MaxValue;
         int minIndex = 0;
+        int bestSingleAxis = 0;
 
         //List of axes to test
         Vector3[] axesToTest = new Vector3[15];
@@ -280,6 +281,12 @@ public static class CollisionDetection
         for (int i = 0; i < axesToTest.Length; i++)
         {
             OBB.tryAxis(b1, b2, axesToTest[i], centers, i, ref minPenetration, ref minIndex);
+
+            //Store best axis incase parallel edge collision
+            if (i == 5)
+            {
+                bestSingleAxis = minIndex;
+            }
         }
 
         Debug.Log("Least axis: " + minIndex + " Penetration: " + minPenetration);
@@ -292,7 +299,7 @@ public static class CollisionDetection
         //Vertex of box2 in a face of box1
         if (minIndex < 3)
         {
-            OBB.vertexFaceCollision(b1, b2, centers, minIndex, minPenetration, out tmpNormal, out tmpContactPoint);
+            OBB.vertexFaceCollision(b1, b2, centers, minIndex, out tmpNormal, out tmpContactPoint);
             Debug.DrawLine(b1.position, b1.position + tmpNormal, Color.green);
             Debug.DrawLine(b2.position, tmpContactPoint, Color.magenta);
         }
@@ -300,9 +307,16 @@ public static class CollisionDetection
         else if (minIndex < 6)
         {
             //Swap b1 and b2 and centers vector
-            OBB.vertexFaceCollision(b2, b1, (centers * -1.0f), (minIndex - 3), minPenetration, out tmpNormal, out tmpContactPoint);
+            OBB.vertexFaceCollision(b2, b1, (centers * -1.0f), (minIndex - 3), out tmpNormal, out tmpContactPoint);
             Debug.DrawLine(b2.position, b2.position + tmpNormal, Color.green);
             Debug.DrawLine(b1.position, tmpContactPoint, Color.magenta);
+        }
+        //Edge of box1 on edge of box2
+        else
+        {
+            OBB.edgeEdgeCollision(b1, b2, centers, (minIndex - 6), bestSingleAxis, out tmpNormal, out tmpContactPoint);
+            Debug.DrawLine(b1.position, b1.position + tmpNormal, Color.green);
+            Debug.DrawLine(b2.position, tmpContactPoint, Color.magenta);
         }
 
         //normal = tmpNormal;

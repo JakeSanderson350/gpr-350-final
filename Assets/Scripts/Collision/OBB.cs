@@ -13,7 +13,9 @@ public class OBB : PhysicsCollider
     Vector3 toWorld(Vector3 _localPoint)
     {
         //return transform.localToWorldMatrix * _localPoint;
-        return transform.TransformPoint(_localPoint);
+        //return transform.TransformPoint(_localPoint);
+        Vector3 rotatedDirection = (axes[0] * _localPoint.x) + (axes[1] * _localPoint.y) + (axes[2] * _localPoint.z);
+        return transform.position + rotatedDirection;
     }
     Vector3 toLocal(Vector3 _worldPoint)
     {
@@ -99,20 +101,35 @@ public class OBB : PhysicsCollider
 
         return vertices;
     }
-
-    //SAT functions
+    //********************************************************************************
+    //* SAT functions
+    //********************************************************************************
     public static bool SATintersect(OBB b1, OBB b2)
     {
-        Vector3[] axesToTest = b1.getAxes();
-        for (int i = 0; i < axesToTest.Length; i++)
-        {
-            if (!overlapOnAxis(b1, b2, axesToTest[i]))
-            {
-                return false;
-            }
-        }
+        //List of axes to test
+        Vector3[] axesToTest = new Vector3[15];
 
-        axesToTest = b2.getAxes();
+        //Axes of b1
+        axesToTest[0] = b1.getAxis(0);
+        axesToTest[1] = b1.getAxis(1);
+        axesToTest[2] = b1.getAxis(2);
+
+        //Axes of b2
+        axesToTest[3] = b2.getAxis(0);
+        axesToTest[4] = b2.getAxis(1);
+        axesToTest[5] = b2.getAxis(2);
+
+        //Edges of both boxes
+        axesToTest[6] = Vector3.Cross(b1.getAxis(0), b2.getAxis(0));
+        axesToTest[7] = Vector3.Cross(b1.getAxis(0), b2.getAxis(1));
+        axesToTest[8] = Vector3.Cross(b1.getAxis(0), b2.getAxis(2));
+        axesToTest[9] = Vector3.Cross(b1.getAxis(1), b2.getAxis(0));
+        axesToTest[10] = Vector3.Cross(b1.getAxis(1), b2.getAxis(1));
+        axesToTest[11] = Vector3.Cross(b1.getAxis(1), b2.getAxis(2));
+        axesToTest[12] = Vector3.Cross(b1.getAxis(2), b2.getAxis(0));
+        axesToTest[13] = Vector3.Cross(b1.getAxis(2), b2.getAxis(1));
+        axesToTest[14] = Vector3.Cross(b1.getAxis(2), b2.getAxis(2));
+
         for (int i = 0; i < axesToTest.Length; i++)
         {
             if (!overlapOnAxis(b1, b2, axesToTest[i]))
@@ -152,7 +169,9 @@ public class OBB : PhysicsCollider
         return result;
     }
 
-    //Collision resolution functions
+    //********************************************************************************
+    //* Collision resolution functions
+    //********************************************************************************
     private static float transformToAxis(OBB _rect, Vector3 _axis)
     {
         return _rect.halfWidth.x * Mathf.Abs(Vector3.Dot(_axis, _rect.getAxis(0))) +
@@ -190,7 +209,7 @@ public class OBB : PhysicsCollider
     }
 
     //Called when vertex from box2 is in a face of box1
-    public static void vertexFaceCollision(OBB b1, OBB b2, Vector3 _centers, int _minIndex, float _penetration, out Vector3 normal, out Vector3 contactPoint)
+    public static void vertexFaceCollision(OBB b1, OBB b2, Vector3 _centers, int _minIndex, out Vector3 normal, out Vector3 contactPoint)
     {
         //Pick one of two faces on axis of box1 that is in the direction of box2
         normal = b1.getAxis(_minIndex);
@@ -204,10 +223,92 @@ public class OBB : PhysicsCollider
         if (Vector3.Dot(b2.getAxis(0), normal) > 0) localVertex.x = -localVertex.x;
         if (Vector3.Dot(b2.getAxis(1), normal) > 0) localVertex.y = -localVertex.y;
         if (Vector3.Dot(b2.getAxis(2), normal) > 0) localVertex.z = -localVertex.z;
-        localVertex = localVertex.normalized * (b2.halfWidth.magnitude / 2.0f);
 
         //Convert to world coordinates
         contactPoint = b2.toWorld(localVertex);
+    }
+
+    private static Vector3 getContactPoint(Vector3 _onePoint, Vector3 _oneAxis, float _oneSize, Vector3 _twoPoint, Vector3 _twoAxis, float _twoSize, bool useOne)
+    {
+        Vector3 midpoints, contactOne, contactTwo;
+        float dpMidOne, dpMidTwo, dpOneTwo, smOne, smTwo;
+        float denom, a, b;
+
+        //Calculate squared magnitudes of each edge direction
+        smOne = _oneAxis.sqrMagnitude;
+        smTwo = _twoAxis.sqrMagnitude;
+        //Get dot product between edge directions which tells us how parallel they are
+        dpOneTwo = Vector3.Dot(_oneAxis, _twoAxis);
+
+        //Vector between midpoints
+        midpoints = _onePoint - _twoPoint;
+        //Dot product of midpoint vector and axes help determine where closest points on each edge are
+        dpMidOne = Vector3.Dot(_oneAxis, midpoints);
+        dpMidTwo = Vector3.Dot(_twoAxis, midpoints);
+
+        denom = (smOne * smTwo) - (dpOneTwo * dpOneTwo);
+
+        //Zero denominator means parralel edges
+        if (Mathf.Abs(denom) < 0.0001f)
+        {
+            return useOne ? _onePoint : _twoPoint;
+        }
+
+        //Parameters for where along each edge the closest points occur
+        a = ((dpOneTwo * dpMidTwo) - (smTwo * dpMidOne)) / denom;
+        b = ((smOne * dpMidTwo) - (dpOneTwo * dpMidOne)) / denom;
+
+        //Check if nearest point is out of bounds
+        if (a > _oneSize || a < -_oneSize ||
+            b > _twoSize ||  b < -_twoSize)
+        {
+            return useOne ? _onePoint : _twoPoint;
+        }
+        else
+        {
+            contactOne = _onePoint + (_oneAxis * a);
+            contactTwo = _twoPoint + (_twoAxis * b);
+
+            //Return midpoint between closest points
+            return (contactOne * 0.5f) + (contactTwo * 0.5f);
+        }
+    }
+
+    public static void edgeEdgeCollision(OBB b1, OBB b2, Vector3 _centers, int _minIndex, int _bestSingleAxis, out Vector3 normal, out Vector3 contactPoint)
+    {
+        //Get axes on which edge-edge collision happened
+        int oneAxisIndex = _minIndex / 3;
+        int twoAxisIndex = _minIndex % 3;
+        Vector3 oneAxis = b1.getAxis(oneAxisIndex);
+        Vector3 twoAxis = b2.getAxis(twoAxisIndex);
+        Vector3 axis = (Vector3.Cross(oneAxis, twoAxis)).normalized;
+
+        //Get axis pointing from b1 to b2
+        if (Vector3.Dot(axis, _centers) > 0)
+        {
+            axis *= -1.0f;
+        }
+
+        //Find midpoints of edges involved
+        Vector3 ptOnOneEdge = b1.halfWidth;
+        Vector3 ptOnTwoEdge = b2.halfWidth;
+
+        for (int i = 0; i < 3; i++)
+        {
+            if (i == oneAxisIndex) ptOnOneEdge[i] = 0;
+            else if (Vector3.Dot(b1.getAxis(i), axis) > 0) ptOnOneEdge[i] = -ptOnOneEdge[i];
+
+            if (i == twoAxisIndex) ptOnTwoEdge[i] = 0;
+            else if (Vector3.Dot(b2.getAxis(i), axis) < 0) ptOnTwoEdge[i] = -ptOnTwoEdge[i];
+        }
+
+        //Get world coordinates of midpoints
+        ptOnOneEdge = b1.toWorld(ptOnOneEdge);
+        ptOnTwoEdge = b2.toWorld(ptOnTwoEdge);
+
+        //Set collsion normal and contact point
+        normal = axis;
+        contactPoint = getContactPoint(ptOnOneEdge, oneAxis, b1.halfWidth[oneAxisIndex], ptOnTwoEdge, twoAxis, b2.halfWidth[twoAxisIndex], _bestSingleAxis > 2);
     }
 
     public override Shape shape => Shape.OBB;
