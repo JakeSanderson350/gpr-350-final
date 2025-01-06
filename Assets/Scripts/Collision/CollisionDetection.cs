@@ -36,6 +36,7 @@ public static class CollisionDetection
     public class CollisionInfo
     {
         public Vector3 normal = Vector3.zero;
+        public Vector3 contactPoint = Vector3.zero;
         public float penetration = 0;
         public float pctToMoveS1 = 0;
         public float pctToMoveS2 = 0;
@@ -44,7 +45,7 @@ public static class CollisionDetection
         public bool HasInfiniteMass => pctToMoveS1 + pctToMoveS2 == 0;
     }
 
-    public delegate void NormalAndPenCalculation(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out float penetration);
+    public delegate void NormalAndPenCalculation(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out Vector3 contactPoint, out float penetration);
 
     public static NormalAndPenCalculation[,] collisionFns = new NormalAndPenCalculation[(int)Shape.Count, (int)Shape.Count];
 
@@ -55,7 +56,7 @@ public static class CollisionDetection
         {
             for (int j = 0; j < (int)Shape.Count; j++)
             {
-                collisionFns[i, j] = (PhysicsCollider _, PhysicsCollider _, out Vector3 _, out float _) => throw new NotImplementedException();
+                collisionFns[i, j] = (PhysicsCollider _, PhysicsCollider _, out Vector3 _, out Vector3 _, out float _) => throw new NotImplementedException();
             }
         }
 
@@ -65,23 +66,23 @@ public static class CollisionDetection
         // TODO: Add additional collider functions here
         AddCollisionFns(Shape.Sphere, Shape.AABB, TestSphereAABB);
         AddCollisionFns(Shape.Sphere, Shape.OBB, TestSphereOBB);
+        AddCollisionFns(Shape.OBB, Shape.OBB, TestOBBOBB);
 
         // Static colliders do nothing
-        NormalAndPenCalculation nop = (PhysicsCollider _, PhysicsCollider _, out Vector3 n, out float p) => { n = Vector3.zero; p = -1; };
+        NormalAndPenCalculation nop = (PhysicsCollider _, PhysicsCollider _, out Vector3 n, out Vector3 c, out float p) => { n = Vector3.zero; c = Vector3.zero; p = -1; };
         AddCollisionFns(Shape.OBB, Shape.Plane, nop);
         AddCollisionFns(Shape.AABB, Shape.Plane, nop);
         AddCollisionFns(Shape.AABB, Shape.OBB, nop);
         AddCollisionFns(Shape.Plane, Shape.Plane, nop);
-        AddCollisionFns(Shape.OBB, Shape.OBB, nop);
         AddCollisionFns(Shape.AABB, Shape.AABB, nop);
     }
 
     static void AddCollisionFns(Shape s1, Shape s2, NormalAndPenCalculation fn)
     {
         NormalAndPenCalculation backwardsFn =
-            (PhysicsCollider a, PhysicsCollider b, out Vector3 c, out float d) =>
+            (PhysicsCollider a, PhysicsCollider b, out Vector3 c, out Vector3 d, out float e) =>
             {
-                fn(b, a, out c, out d);
+                fn(b, a, out c, out d, out e);
                 c = -c;
             };
 
@@ -89,7 +90,7 @@ public static class CollisionDetection
         collisionFns[(int)s2, (int)s1] = backwardsFn;
     }
 
-    public static void TestSphereSphere(PhysicsCollider shape1, PhysicsCollider shape2, out Vector3 normal, out float penetration)
+    public static void TestSphereSphere(PhysicsCollider shape1, PhysicsCollider shape2, out Vector3 normal, out Vector3 contactPoint, out float penetration)
     {
         Sphere s1 = shape1 as Sphere;
         Sphere s2 = shape2 as Sphere;
@@ -99,9 +100,10 @@ public static class CollisionDetection
         float sumOfRadii = (s1.Radius + s2.Radius);
         penetration = sumOfRadii - dist;
         normal = dist == 0 ? Vector3.zero : (s2ToS1 / dist);
+        contactPoint = Vector3.zero; //Set to zero because not relevant for this collision
     }
 
-    public static void TestSpherePlane(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out float penetration)
+    public static void TestSpherePlane(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out Vector3 contactPoint, out float penetration)
     {
         Sphere s = s1 as Sphere;
         PlaneCollider p = s2 as PlaneCollider;
@@ -110,11 +112,12 @@ public static class CollisionDetection
         float dist = Mathf.Abs(offset);
         penetration = s.Radius - dist;
         normal = offset >= 0 ? p.Normal : -p.Normal;
+        contactPoint = Vector3.zero; //Set to zero because not relevant for this collision
     }
 
     // TODO: YOUR CODE HERE
     // Add new functions for sphere-AABB and sphere-OBB tests.
-    public static void TestSphereAABB(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out float penetration)
+    public static void TestSphereAABB(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out Vector3 contactPoint, out float penetration)
     {
         Sphere s = s1 as Sphere;
         AABB aabb = s2 as AABB;
@@ -126,9 +129,10 @@ public static class CollisionDetection
         float dist = offset.magnitude;
         normal = offset.normalized;
         penetration = s.Radius - dist;
+        contactPoint = Vector3.zero; //Set to zero because not relevant for this collision
     }
 
-    public static void TestSphereOBB(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out float penetration)
+    public static void TestSphereOBB(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out Vector3 contactPoint, out float penetration)
     {
         Sphere s = s1 as Sphere;
         OBB obb = s2 as OBB;
@@ -140,6 +144,7 @@ public static class CollisionDetection
         float dist = offset.magnitude;
         normal = offset.normalized;
         penetration = s.Radius - dist;
+        contactPoint = Vector3.zero; //Set to zero because not relevant for this collision
     }
 
     public static CollisionInfo GetCollisionInfo(PhysicsCollider s1, PhysicsCollider s2)
@@ -149,7 +154,7 @@ public static class CollisionDetection
 
         try
         {
-            calc(s1, s2, out info.normal, out info.penetration);
+            calc(s1, s2, out info.normal, out info.contactPoint, out info.penetration);
         }
         catch (NotImplementedException e)
         {
@@ -178,7 +183,7 @@ public static class CollisionDetection
 
         try
         {
-            calc(s1, s2, out info.normal, out info.penetration);
+            calc(s1, s2, out info.normal, out info.contactPoint, out info.penetration);
         }
         catch (NotImplementedException e)
         {
@@ -208,6 +213,23 @@ public static class CollisionDetection
 
         delPos.ApplyToPosition(c1, c2);
         delVel.ApplyToVelocity(c1, c2);
+    }
+
+    public static void ApplyCollisionResolution(OBB c1, OBB c2)
+    {
+        CollisionChecks++;
+        CollisionInfo info = GetCollisionInfo(c1, c2);
+
+        VectorDeltas delVel = ResolveVelocity(info);
+
+        c1.contactPoint = info.contactPoint;
+        c2.contactPoint = info.contactPoint;
+
+        c1.contactForce = delVel.s1;
+        c2.contactForce = delVel.s2;
+
+        c1.addForce = true;
+        c2.addForce = true;
     }
 
     public static VectorDeltas ResolvePosition(CollisionInfo info)
@@ -241,7 +263,8 @@ public static class CollisionDetection
     }
 
     //OBB Collision stuff
-    public static void TestOBBOBB(PhysicsCollider s1, PhysicsCollider s2/*, out Vector3 normal, out Vector3 contactPoint, out float penetration*/)
+    //Return contact point so function will fit delegate requirements
+    public static void TestOBBOBB(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out Vector3 contactPoint, out float penetration)
     {
         OBB b1 = s1 as OBB;
         OBB b2 = s2 as OBB;
@@ -319,8 +342,8 @@ public static class CollisionDetection
             Debug.DrawLine(b2.position, tmpContactPoint, Color.magenta);
         }
 
-        //normal = tmpNormal;
-        //contactPoint = tmpContactPoint;
-        //penetration = minPenetration;
+        normal = tmpNormal;
+        penetration = minPenetration;
+        contactPoint = tmpContactPoint;
     }
 }

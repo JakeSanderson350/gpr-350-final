@@ -5,10 +5,13 @@ using UnityEngine.UIElements;
 
 public class OBB : PhysicsCollider
 {
-    // TODO: YOUR CODE HERE
     private Vector3 center;
     private Vector3 halfWidth = new Vector3(0.5f, 0.5f, 0.5f);
     private Vector3[] axes = new Vector3[3];
+
+    public Vector3 contactPoint = Vector3.zero;
+    public Vector3 contactForce = Vector3.zero;
+    public bool addForce = false;
 
     Vector3 toWorld(Vector3 _localPoint)
     {

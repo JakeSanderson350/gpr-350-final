@@ -40,7 +40,7 @@ public class CollisionManager : MonoBehaviour
                 {
                     //Debug.Log("Colliding");
                     text.text = "Colliding: True";
-                    TestOBBOBB(b1, b2);
+                    ApplyCollisionResolution(b1, b2);
                 }
                 else
                 {

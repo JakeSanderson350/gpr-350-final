@@ -45,9 +45,9 @@ public class SceneTests : InputTestFixture
 
             try
             {
-                Vector3 normal;
+                Vector3 normal, point;
                 float dist;
-                CollisionDetection.collisionFns[(int)PhysicsCollider.Shape.Sphere, (int)PhysicsCollider.Shape.AABB](s, b, out normal, out dist);
+                CollisionDetection.collisionFns[(int)PhysicsCollider.Shape.Sphere, (int)PhysicsCollider.Shape.AABB](s, b, out normal, out point, out dist);
 
                 Assert.That(dist, Is.EqualTo(0.2246058f).Using(UnityEngine.TestTools.Utils.FloatEqualityComparer.Instance));
                 Assert.That(normal, Is.EqualTo(new Vector3(0.17793f, 0.00000f, -0.98404f)).Using(Vec3Comparer));
@@ -74,9 +74,9 @@ public class SceneTests : InputTestFixture
 
             try
             {
-                Vector3 normal;
+                Vector3 normal, point;
                 float dist;
-                CollisionDetection.collisionFns[(int)PhysicsCollider.Shape.Sphere, (int)PhysicsCollider.Shape.OBB](s, b, out normal, out dist);
+                CollisionDetection.collisionFns[(int)PhysicsCollider.Shape.Sphere, (int)PhysicsCollider.Shape.OBB](s, b, out normal, out point, out dist);
 
                 Assert.That(dist, Is.EqualTo(0.2551069f).Using(UnityEngine.TestTools.Utils.FloatEqualityComparer.Instance));
                 Assert.That(normal, Is.EqualTo(new Vector3(0.94049f, 0.27164f, 0.20417f)).Using(Vec3Comparer));
