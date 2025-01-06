@@ -5,13 +5,10 @@ using UnityEngine.UIElements;
 
 public class OBB : PhysicsCollider
 {
+    // TODO: YOUR CODE HERE
     private Vector3 center;
     private Vector3 halfWidth = new Vector3(0.5f, 0.5f, 0.5f);
     private Vector3[] axes = new Vector3[3];
-
-    public Vector3 contactPoint = Vector3.zero;
-    public Vector3 contactForce = Vector3.zero;
-    public bool addForce = false;
 
     Vector3 toWorld(Vector3 _localPoint)
     {
@@ -46,7 +43,7 @@ public class OBB : PhysicsCollider
         return axes;
     }
 
-    public Vector3 getAxis(int _index) 
+    public Vector3 getAxis(int _index)
     {
         if (_index < axes.Length || _index >= 0)
         {
@@ -59,7 +56,7 @@ public class OBB : PhysicsCollider
         }
     }
 
-    public void getClosestPoint (Vector3 _worldPoint, out Vector3 closestPoint)
+    public void getClosestPoint(Vector3 _worldPoint, out Vector3 closestPoint)
     {
         Vector3 sphereCenterLocal = toLocal(_worldPoint);
         center = toLocal(transform.position);
@@ -263,7 +260,7 @@ public class OBB : PhysicsCollider
 
         //Check if nearest point is out of bounds
         if (a > _oneSize || a < -_oneSize ||
-            b > _twoSize ||  b < -_twoSize)
+            b > _twoSize || b < -_twoSize)
         {
             return useOne ? _onePoint : _twoPoint;
         }

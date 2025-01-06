@@ -119,17 +119,6 @@ public class RectRigidBody : MonoBehaviour
         rbOBB.transform.rotation = rotation.Quaternion();
 
         rbOBB.setAxes(rotation);
-
-        if (rbOBB.addForce)
-        {
-            COM.velocity = Vector3.zero;
-            COM.acceleration = Vector3.zero;
-            angularMomentum = Vector3.zero;
-
-            AddForce(rbOBB.contactForce, rbOBB.contactPoint);
-            rbOBB.addForce = false;
-            Debug.Log("Force Added");
-        }
     }
 
     public void AddForce(Vector3 _newForce, Vector3 _applicationPoint)
