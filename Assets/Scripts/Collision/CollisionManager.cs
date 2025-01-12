@@ -29,18 +29,18 @@ public class CollisionManager : MonoBehaviour
 
     private void CheckOBBCollision()
     {
-        OBB[] oBBs = FindObjectsOfType<OBB>();
-        for (int i = 0; i < oBBs.Length; i++)
+        RectRigidBody[] rigidBodies = FindObjectsOfType<RectRigidBody>();
+        for (int i = 0; i < rigidBodies.Length; i++)
         {
-            OBB b1 = oBBs[i];
-            for (int j = i + 1; j < oBBs.Length; j++)
+            OBB b1 = rigidBodies[i].rbOBB;
+            for (int j = i + 1; j < rigidBodies.Length; j++)
             {
-                OBB b2 = oBBs[j];
+                OBB b2 = rigidBodies[j].rbOBB;
                 if (OBB.SATintersect(b1, b2))
                 {
                     //Debug.Log("Colliding");
                     text.text = "Colliding: True";
-                    TestOBBOBB(b1, b2);
+                    ApplyCollisionResolution(rigidBodies[i], rigidBodies[j]);
                 }
                 else
                 {

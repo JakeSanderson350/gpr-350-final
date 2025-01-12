@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static PhysicsCollider;
+using static RectRigidBody;
 
 public static class CollisionDetection
 {
@@ -36,6 +37,7 @@ public static class CollisionDetection
     public class CollisionInfo
     {
         public Vector3 normal = Vector3.zero;
+        public Vector3 contactPoint = Vector3.zero;
         public float penetration = 0;
         public float pctToMoveS1 = 0;
         public float pctToMoveS2 = 0;
@@ -169,6 +171,32 @@ public static class CollisionDetection
         return info;
     }
 
+    public static CollisionInfo GetCollisionInfo(RectRigidBody s1, RectRigidBody s2)
+    {
+        CollisionInfo info = new CollisionInfo();
+
+        try
+        {
+            TestOBBOBB(s1.rbOBB, s2.rbOBB, out info.normal, out info.contactPoint, out info.penetration);
+        }
+        catch (NotImplementedException e)
+        {
+            Debug.Log($"Tried to test collision between {s1.rbOBB.shape} and {s2.rbOBB.shape}, but no collision detection function was found.");
+            throw e;
+        }
+
+        {
+            float sumOfInvMasses = s1.getInvMass() + s2.getInvMass();
+            if (sumOfInvMasses == 0) return info; // Both masses infinite, avoid divide-by-zero error
+            info.pctToMoveS1 = s1.getInvMass() / sumOfInvMasses;
+            info.pctToMoveS2 = s2.getInvMass() / sumOfInvMasses;
+
+            info.separatingVelocity = Vector3.Dot(s1.getVelocity() - s2.getVelocity(), info.normal);
+        }
+
+        return info;
+    }
+
     //Added so that separating velocity can be calculated
     //without changing actual velocity of tire
     public static CollisionInfo GetCollisionInfo(PhysicsCollider s1, PhysicsCollider s2, Vector3 tireVelocity)
@@ -210,6 +238,66 @@ public static class CollisionDetection
         delVel.ApplyToVelocity(c1, c2);
     }
 
+    public static void ApplyCollisionResolution (RectRigidBody c1, RectRigidBody c2)
+    {
+        CollisionChecks++;
+        CollisionInfo info = GetCollisionInfo(c1, c2);
+
+        if (!info.IsColliding) return;
+
+        // Get relative velocity at contact point
+        Vector3 relVelAtContact = (c1.getVelocity() + Vector3.Cross(c1.getAngularVelocity(), info.contactPoint - c1.getPosition())) -
+                                 (c2.getVelocity() + Vector3.Cross(c2.getAngularVelocity(), info.contactPoint - c2.getPosition()));
+
+        // Calculate separating velocity along normal
+        float separatingVelocity = Vector3.Dot(relVelAtContact, info.normal);
+        if (separatingVelocity > 0) return; // Already separating
+
+        float restitution = 0.5f; // Adjust this value for bounciness
+        float newSepVelocity = -separatingVelocity * restitution;
+        float deltaVelocity = newSepVelocity - separatingVelocity;
+
+        // Calculate impulse magnitude
+        float totalInverseMass = c1.getInvMass() + c2.getInvMass();
+
+        // Calculate angular components
+        Vector3 r1 = info.contactPoint - c1.getPosition();
+        Vector3 r2 = info.contactPoint - c2.getPosition();
+
+        // Impulse scaling for angular motion
+        Vector3 impulsePerIMass = Vector3.Cross(r1, info.normal);
+        Vector3 angularEffect = Vector3.Cross(impulsePerIMass, r1);
+
+        float angularFactor = Vector3.Dot(angularEffect, info.normal);
+        float totalFactor = totalInverseMass + angularFactor;
+
+        // Calculate final impulse
+        float impulse = deltaVelocity / totalFactor;
+        Vector3 impulseVector = info.normal * impulse;
+
+        // Apply impulses
+        Vector3 linearChange1 = impulseVector * c1.getInvMass();
+        Vector3 linearChange2 = -impulseVector * c2.getInvMass();
+
+        Vector3 angularChange1 = Vector3.Cross(r1, impulseVector);
+        Vector3 angularChange2 = Vector3.Cross(r2, -impulseVector);
+
+        // Update velocities
+        c1.setVelocity(c1.getVelocity() + linearChange1);
+        c2.setVelocity(c2.getVelocity() + linearChange2);
+
+        c1.setAngularMomentum(c1.getAngularMomentum() + angularChange1);
+        c2.setAngularMomentum(c2.getAngularMomentum() + angularChange2);
+
+        // Resolve interpenetration
+        float percent = 0.8f; // Penetration resolution percentage
+        float slop = 0.01f;  // Penetration allowance
+        Vector3 correction = info.normal * Mathf.Max(info.penetration - slop, 0.0f) * percent / totalInverseMass;
+
+        c1.setPosition(c1.getPosition() + (correction * c1.getInvMass()));
+        c2.setPosition(c2.getPosition() - (correction * c2.getInvMass()));
+    }
+
     public static VectorDeltas ResolvePosition(CollisionInfo info)
     {
         if (!info.IsColliding) return VectorDeltas.zero;
@@ -241,7 +329,7 @@ public static class CollisionDetection
     }
 
     //OBB Collision stuff
-    public static void TestOBBOBB(PhysicsCollider s1, PhysicsCollider s2/*, out Vector3 normal, out Vector3 contactPoint, out float penetration*/)
+    public static void TestOBBOBB(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out Vector3 contactPoint, out float penetration)
     {
         OBB b1 = s1 as OBB;
         OBB b2 = s2 as OBB;
@@ -319,8 +407,8 @@ public static class CollisionDetection
             Debug.DrawLine(b2.position, tmpContactPoint, Color.magenta);
         }
 
-        //normal = tmpNormal;
-        //contactPoint = tmpContactPoint;
-        //penetration = minPenetration;
+        normal = tmpNormal;
+        contactPoint = tmpContactPoint;
+        penetration = minPenetration;
     }
 }

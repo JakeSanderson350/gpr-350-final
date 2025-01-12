@@ -145,8 +145,50 @@ public class RectRigidBody : MonoBehaviour
         return COM.velocity + rotationVelocity;
     }
 
+
+    //********************************************************************************
+    //* Setters / Getters
+    //********************************************************************************
     public Vector3 getDimensions()
     {
         return dimensions;
+    }
+
+    public float getInvMass()
+    { 
+        return invMass;
+    }
+
+    public Vector3 getPosition()
+    {
+        return COM.transform.position;
+    }
+    public void setPosition(Vector3 _position)
+    {
+        COM.transform.position = _position;
+    }
+
+    public Vector3 getVelocity()
+    {
+        return COM.velocity;
+    }
+    public void setVelocity(Vector3 _velocity)
+    {
+        COM.linearMomentum = _velocity * mass;
+        COM.velocity = _velocity;
+    }
+
+    public Vector3 getAngularVelocity()
+    {
+        return angularVelocity;
+    }
+
+    public Vector3 getAngularMomentum()
+    {
+        return angularMomentum;
+    }
+    public void setAngularMomentum(Vector3 _angularMomentum)
+    {
+        angularMomentum = _angularMomentum;
     }
 }
